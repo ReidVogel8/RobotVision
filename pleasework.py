@@ -129,7 +129,7 @@ class Controller:
         cmd = chr(0x10) + chr(chan)
         self.sendCmd(cmd)
         lsb = ord(self.usb.read())
-        msb = ord(self.usb.read())yield
+        msb = ord(self.usb.read())
         
         return (msb << 8) + lsb
 
