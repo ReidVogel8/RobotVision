@@ -173,7 +173,8 @@ class Controller:
         self.sendCmd(cmd)
 
     # Stop the current Maestro Script
-
+    def mainControl(self):
+        pass
 
 def getKey(self):
     fd = sys.stdin.fileno()
