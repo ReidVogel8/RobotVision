@@ -3,7 +3,7 @@ from maestro import Controller
 
 MIDDLE = 5800
 UPDOWNPORT = 4
-LEFTRIGHTPORT = 6
+LEFTRIGHTPORT = 7
 
 class HeadControl:
     _instance = None
