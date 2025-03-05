@@ -1,4 +1,4 @@
-
+import time
 from maestro import Controller
 
 MIDDLE = 5800
@@ -26,9 +26,11 @@ class HeadControl:
         self.m.setTarget(PORT, 7000)
         self.m.setTarget(PORT, 3000)
         pass
-    
-    
+
+
 x = HeadControl().getInst()
 x.tilt(9000)
+time.sleep(1)
 x.tilt(3000)
-x.tilt(MIDDLE)
+time.sleep(1)
+x.tilt(6000)
