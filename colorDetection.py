@@ -2,7 +2,7 @@ import pyrealsense2 as rs
 import numpy as np
 import cv2
 import time
-from Maestro import Controller  # Ensure the Maestro Controller class is available
+from maestro import Controller  # Ensure the Maestro Controller class is available
 
 # Initialize the servo controller
 servo = Controller()
