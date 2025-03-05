@@ -33,8 +33,8 @@ class HeadControl:
     
     def wheel_rotate_left(self):
         print("Left Wheel Forward")
-        self.m.setTarget(LEFT_WHEEL_PORT, 7000)
-        self.m.setTarget(RIGHT_WHEEL_PORT, 7000)
+        self.m.setTarget(LEFT_WHEEL_PORT, 7300)
+        self.m.setTarget(RIGHT_WHEEL_PORT, 7300)
         time.sleep(1)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
