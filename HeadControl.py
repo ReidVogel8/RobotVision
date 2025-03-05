@@ -3,8 +3,9 @@ from maestro import Controller
 
 MIDDLE = 5800
 UPDOWNPORT = 4
-LEFTRIGHTPORT = 2
+LEFTRIGHTPORT = 5
 LEFT_WHEEL_PORT = 0
+RIGHT_WHEEL_PORT = 1
 
 class HeadControl:
     _instance = None
@@ -18,33 +19,35 @@ class HeadControl:
         self.m = Controller()
         pass
     
-    def tilt(self, num):
+    def head_tilt(self, num):
         print("turn Head")
         self.m.setTarget(UPDOWNPORT, num)
         time.sleep(1)
         pass
 
-    def rotate(self, num):
+    def head_rotate(self, num):
         print("rotate Head")
         self.m.setTarget(LEFTRIGHTPORT, num)
         time.sleep(1)
         pass
-
+    
     def wheel_rotate_left(self):
         print("Left Wheel Forward")
         self.m.setTarget(LEFT_WHEEL_PORT, 9000)
+        self.m.setTarget(RIGHT_WHEEL_PORT, 3000)
         time.sleep(1)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
+        self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         pass
 
 
 x = HeadControl().getInst()
-x.tilt(9000)
-x.tilt(3000)
-x.tilt(6000)
+x.head_tilt(9000)
+x.head_tilt(3000)
+x.head_tilt(6000)
 
-x.rotate(9000)
-x.rotate(3000)
-x.rotate(6000)
+x.head_rotate(9000)
+x.head_rotate(3000)
+x.head_rotate(6000)
 
 x.wheel_rotate_left()
