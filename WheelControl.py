@@ -2,8 +2,8 @@ from maestro import Controller
 import time
 
 MIDDLE = 5800
-LEFT_WHEEL_PORT = 8
-RIGHT_WHEEL_PORT = 12
+LEFT_WHEEL_PORT = 0
+RIGHT_WHEEL_PORT = 1
 
 
 class WheelControl:
@@ -20,7 +20,7 @@ class WheelControl:
         pass
 
     def rotate_left(self):
-        print("rotate Head")
+        print("Left Wheel Forward")
         self.m.setTarget(LEFT_WHEEL_PORT, 9000)
         time.sleep(1)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
