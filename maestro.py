@@ -129,7 +129,8 @@ class Controller:
         cmd = chr(0x10) + chr(chan)
         self.sendCmd(cmd)
         lsb = ord(self.usb.read())
-        msb = ord(self.usb.read())yield
+        msb = ord(self.usb.read())
+        yield
         
         return (msb << 8) + lsb
 
@@ -172,68 +173,4 @@ class Controller:
         self.sendCmd(cmd)
 
 
-    # Stop the current Maestro Script
-#    def getKey(self):
-#	fd = sys.stdin.fileno()
-#	old_settings = termios.tcgetattr(fd)
-#	try:
-#		tty.setraw(sys.stdin.fileno())
-#		inKey = sys.stdin.read(1)
-#	finally:
-#		termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-#
-#        # inKey = raw_input("Enter key: ")
-#        return inKey
-#
-#
-#    def mainControl(self):
-#        input = "*"
-#        waist = 6000
-#        htilt = 6000
-#        hturn = 6000
-#        movement = 6000
-#        turning = 6000
-#        while input != "q":
-#                input = x.getKey()
-#                if input == "1":
-#                        waist += 250
-#                        x.setTarget(0, waist)
-#                elif input == "2":
-#                        waist -= 250
-#                        x.setTarget(0, waist)
-#                elif input == "3":
-#                        hturn += 250
-#                        x.setTarget(3, hturn)
-#                elif input == "4":
-#                        hturn -= 250
-#                        x.setTarget(3, hturn)
-#                elif input == "5":
-#                        htilt += 250
-#                        x.setTarget(4, htilt)
-#                elif input == "6":
-#                        htilt -= 250
-#                        x.setTarget(4, htilt)
-#		elif input == "s":
-#                        movement += 250
-#                        x.setTarget(1, movement)			
-#                elif input == "w":
-#                        movement -= 250
-#                        x.setTarget(1, movement)
-#                elif input == "a":
-#                        x.setTarget(2, 7000)
-#			time.sleep(0.7)
-#			x.setTarget(2, 6000)
-#                elif input == "d":
-#			x.setTarget(2, 5000)
-#                        time.sleep(0.7)
-#                        x.setTarget(2, 6000)   
-#                else:
-#                        x.setTarget(0, 6000)
-#			x.setTarget(1, 6000)
-#			x.setTarget(2, 6000)
-#			x.setTarget(3, 6000)
-#			x.setTarget(4, 6000)
-#                        print("quitting")
-#	
-#x = Controller()
-#x.mainControl()
+
