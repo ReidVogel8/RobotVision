@@ -19,18 +19,18 @@ class HeadControl:
     def tilt(self, num):
         print("turn Head")
         self.m.setTarget(PORT, num)
+        time.sleep(1)
         pass
 
     def rotate(self):
         print("rotate Head")
         self.m.setTarget(PORT, 7000)
         self.m.setTarget(PORT, 3000)
+        time.sleep(1)
         pass
 
 
 x = HeadControl().getInst()
 x.tilt(9000)
-time.sleep(1)
 x.tilt(3000)
-time.sleep(1)
 x.tilt(6000)
