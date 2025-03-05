@@ -30,7 +30,7 @@ class HeadControl:
         time.sleep(1)
         pass
 
-        def wheel_rotate_left(self):
+    def wheel_rotate_left(self):
         print("Left Wheel Forward")
         self.m.setTarget(LEFT_WHEEL_PORT, 9000)
         time.sleep(1)
