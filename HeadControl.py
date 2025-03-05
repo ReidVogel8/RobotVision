@@ -2,7 +2,8 @@ import time
 from maestro import Controller
 
 MIDDLE = 5800
-PORT = 4
+UPDOWNPORT = 4
+LEFTRIGHTPORT = 5
 
 class HeadControl:
     _instance = None
@@ -18,14 +19,13 @@ class HeadControl:
     
     def tilt(self, num):
         print("turn Head")
-        self.m.setTarget(PORT, num)
+        self.m.setTarget(UPDOWNPORT, num)
         time.sleep(1)
         pass
 
-    def rotate(self):
+    def rotate(self, num):
         print("rotate Head")
-        self.m.setTarget(PORT, 7000)
-        self.m.setTarget(PORT, 3000)
+        self.m.setTarget(LEFTRIGHTPORT, num)
         time.sleep(1)
         pass
 
@@ -34,3 +34,7 @@ x = HeadControl().getInst()
 x.tilt(9000)
 x.tilt(3000)
 x.tilt(6000)
+
+x.rotate(9000)
+x.rotate(3000)
+x.rotate(6000)
