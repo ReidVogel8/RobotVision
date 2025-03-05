@@ -16,11 +16,19 @@ class HeadControl:
         self.m = Controller()
         pass
     
-    def tilt(self):
+    def tilt(self, num):
         print("turn Head")
+        self.m.setTarget(PORT, num)
+        pass
+
+    def rotate(self):
+        print("rotate Head")
         self.m.setTarget(PORT, 7000)
         self.m.setTarget(PORT, 3000)
         pass
-
+    
+    
 x = HeadControl().getInst()
-x.tilt()
+x.tilt(9000)
+x.tilt(3000)
+x.tilt(MIDDLE)
