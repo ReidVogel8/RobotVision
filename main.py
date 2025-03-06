@@ -77,6 +77,8 @@ class ColorMovement:
                 #move foward if image is covered 25 percent with orange
                 lower_color = np.array([255, 150, 0])
                 upper_color = np.array([255, 200, 0])
+                lowHSV = cv2.cvtColor(lower_color, cv2.COLOR_BGR2HSV)
+                highHSV = cv2.cvtColor(upper_color, cv2.COLOR_BGR2HSV)
                 hsv_image = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
                 mask = cv2.inRange(hsv_image, lower_color, upper_color)
                 contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -89,7 +91,7 @@ class ColorMovement:
 
                     print(f"Color coverage: {coverage:.2f}%")
 
-                    if coverage > 0:  # Move forward if object covers more than 25% of frame
+                    if coverage > 25:  # Move forward if object covers more than 25% of frame
                         print("Object detected. Moving forward...")
                         self.m.setTarget(1,6000)
                         self.m.setTarget(1, 7000)  # Move forward
