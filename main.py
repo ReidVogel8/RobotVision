@@ -89,7 +89,7 @@ class ColorMovement:
 
                     print(f"Color coverage: {coverage:.2f}%")
 
-                    if coverage > 25:  # Move forward if object covers more than 25% of frame
+                    if coverage > 0:  # Move forward if object covers more than 25% of frame
                         print("Object detected. Moving forward...")
                         self.m.setTarget(1,6000)
                         self.m.setTarget(1, 7000)  # Move forward
