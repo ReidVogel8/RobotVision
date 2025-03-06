@@ -92,7 +92,7 @@ class ColorMovement:
                     if coverage > 25:  # Move forward if object covers more than 25% of frame
                         print("Object detected. Moving forward...")
                         self.m.setTarget(1,6000)
-                        self.m.setTarget(1, 7000)  # Move forward
+                        self.m.setTarget(1, 5000)  # Move forward
                         time.sleep(2)  # Move for 2 seconds (approx 4 feet)
                         self.m.setTarget(1, 6000)  # Stop
                         print("Stopping robot.")
