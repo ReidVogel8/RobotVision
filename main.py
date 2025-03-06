@@ -75,12 +75,10 @@ class ColorMovement:
                     images = np.hstack((color_image, depth_colormap))
 
                 #move foward if image is covered 25 percent with orange
-                lower_color = np.array([255, 150, 0])
-                upper_color = np.array([255, 200, 0])
-                lowHSV = cv2.cvtColor(lower_color, cv2.COLOR_BGR2HSV)
-                highHSV = cv2.cvtColor(upper_color, cv2.COLOR_BGR2HSV)
+                lower_color = np.array([0, 140, 100])
+                upper_color = np.array([15, 200, 170])
                 hsv_image = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
-                mask = cv2.inRange(hsv_image, lowHSV, highHSV)
+                mask = cv2.inRange(hsv_image, lower_color, upper_color)
                 contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
                 if contours:
