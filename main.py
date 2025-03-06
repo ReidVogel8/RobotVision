@@ -108,4 +108,4 @@ class ColorMovement:
             pipeline.stop()
 
 x = ColorMovement().getInst()
-x.foward()
+x.forward()
