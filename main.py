@@ -75,8 +75,8 @@ class ColorMovement:
                     images = np.hstack((color_image, depth_colormap))
 
                 #move foward if image is covered 25 percent with orange
-                lower_color = np.array([0, 0, 0])
-                upper_color = np.array([255, 255, 255])
+                lower_color = np.array([255, 150, 0])
+                upper_color = np.array([255, 200, 0])
                 hsv_image = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
                 mask = cv2.inRange(hsv_image, lower_color, upper_color)
                 contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -91,10 +91,10 @@ class ColorMovement:
 
                     if coverage > 25:  # Move forward if object covers more than 25% of frame
                         print("Object detected. Moving forward...")
-                        self.m.setTarget(0,6000)
-                        self.m.setTarget(0, 7000)  # Move forward
+                        self.m.setTarget(1,6000)
+                        self.m.setTarget(1, 7000)  # Move forward
                         time.sleep(2)  # Move for 2 seconds (approx 4 feet)
-                        self.m.setTarget(0, 6000)  # Stop
+                        self.m.setTarget(1, 6000)  # Stop
                         print("Stopping robot.")
                         break  # Stop tracking after moving forward
 
