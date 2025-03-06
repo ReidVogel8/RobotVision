@@ -80,7 +80,7 @@ class ColorMovement:
                 lowHSV = cv2.cvtColor(lower_color, cv2.COLOR_BGR2HSV)
                 highHSV = cv2.cvtColor(upper_color, cv2.COLOR_BGR2HSV)
                 hsv_image = cv2.cvtColor(color_image, cv2.COLOR_BGR2HSV)
-                mask = cv2.inRange(hsv_image, lower_color, upper_color)
+                mask = cv2.inRange(hsv_image, lowHSV, highHSV)
                 contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
                 if contours:
