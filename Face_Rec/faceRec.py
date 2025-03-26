@@ -96,10 +96,10 @@ def recognize_faces():
             if confidence < 50:  # Confidence threshold (lower is better)
                 name = labels[id_]
                 label_text.set(f"Hello, {name}!")
-                robot.move_forward()
+                #robot.move_forward()
             else:
                 label_text.set("Stranger Danger!")
-                robot.move_backward()
+                #robot.move_backward()
 
             # Draw rectangle around detected face
             color = (0, 255, 0) if confidence < 50 else (0, 0, 255)
