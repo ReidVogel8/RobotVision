@@ -25,7 +25,7 @@ config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
 pipeline.start(config)
 
 # Robot movement control class
-MIDDLE = 5800
+MIDDLE = 6000
 HEAD_UP_DOWN_PORT = 4
 HEAD_LEFT_RIGHT_PORT = 2
 LEFT_WHEEL_PORT = 0
@@ -45,20 +45,18 @@ class RobotControl:
         self.m = Controller()
 
     def move_forward(self):
-        """Move forward 2 feet"""
         print("Moving Forward 2 Feet")
         self.m.setTarget(LEFT_WHEEL_PORT, 7000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 7000)
-        time.sleep(2)  # Adjust time based on movement speed
+        time.sleep(2) 
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
 
     def move_backward(self):
-        """Move backward 3 feet"""
         print("Stranger Danger! Moving Backward 3 Feet")
         self.m.setTarget(LEFT_WHEEL_PORT, 5000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
-        time.sleep(3)  # Adjust time based on movement speed
+        time.sleep(3) 
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
 
@@ -68,7 +66,7 @@ robot = RobotControl().getInst()
 # Tkinter GUI setup
 root = tk.Tk()
 root.title("Face Recognition")
-root.geometry("300x100")
+root.geometry("800x800")
 label_text = tk.StringVar()
 label_display = Label(root, textvariable=label_text, font=("Arial", 16))
 label_display.pack()
