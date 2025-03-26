@@ -4,10 +4,19 @@ import os
 import numpy as np
 import pickle
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-image_dir = os.path.join(BASE_DIR, "Images")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Get script directory
+IMAGE_DIR = os.path.join(BASE_DIR, "Images")  # Path to images
+CASCADE_PATH = cv.data.haarcascades + "haarcascade_frontalface_default.xml"
 
-face_cascade = cv.CascadeClassifier(BASE_DIR + '/data/haarcascade_frontalface_default.xml')
+# Check if the images directory exists
+if not os.path.exists(IMAGE_DIR):
+    print(f"ERROR: Images folder not found at {IMAGE_DIR}")
+    exit(1)
+
+# Load Haar Cascade for face detection
+face_cascade = cv.CascadeClassifier(CASCADE_PATH)
+
+# Create LBPH Face Recognizer
 recognizer = cv.face.LBPHFaceRecognizer_create()
 
 current_id = 0
