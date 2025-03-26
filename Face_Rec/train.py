@@ -5,9 +5,9 @@ import numpy as np
 import pickle
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-image_dir = os.path.join(BASE_DIR, "Images/Hunter")
+image_dir = os.path.join(BASE_DIR, "images")
 
-face_cascade = cv.CascadeClassifier(BASE_DIR + '\data\haarcascade_frontalface_default.xml')
+face_cascade = cv.CascadeClassifier(BASE_DIR + '/data/haarcascade_frontalface_default.xml')
 recognizer = cv.face.LBPHFaceRecognizer_create()
 
 current_id = 0
@@ -17,13 +17,12 @@ x_train = []
 
 for root, dirs, files in os.walk(image_dir):
     for file in files:
-
-        path = os.path.join(root, file)
-        label = os.path.basename(root).replace(" ", "_").lower()
-        print(os.path.basename(root))
-        print(label, path)
-        if not label in label_ids:
-            if file.endswith("png") or file.endswith("jpg") or file.endswith("jfif"):
+        if file.endswith("png") or file.endswith("jpg") or file.endswith("jfif"):
+            path = os.path.join(root, file)
+            label = os.path.basename(root).replace(" ", "_").lower()
+            print(os.path.basename(root))
+            print(label, path)
+            if not label in label_ids:
                 label_ids[label] = current_id
                 current_id += 1
             id = label_ids[label]
