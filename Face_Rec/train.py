@@ -3,7 +3,7 @@ import cv2 as cv
 import os
 import numpy as np
 import pickle
-from pillow_heif import register_heif_opener
+
 
 # Register HEIC support
 register_heif_opener()
