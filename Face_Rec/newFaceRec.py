@@ -111,7 +111,7 @@ def recognize_faces():
                 roi_gray = gray[y:y + h, x:x + w]
                 id_, confidence = recognizer.predict(roi_gray)
 
-                if confidence < 87:  # Face recognized
+                if confidence < 82:  # Face recognized
                     name = labels[id_]
                     root.after(0, lambda: label_text.set(f"Hello, {name}!"))
 
