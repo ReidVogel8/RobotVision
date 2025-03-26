@@ -27,7 +27,7 @@ for root, dirs, files in os.walk(image_dir):
         id = label_ids[label]
         print(label_ids)
         pil_image = Image.open(path).convert("L")
-        image_array = np.array(pil_image, "unit8")
+        image_array = np.array(pil_image, "uint8")
         faces = face_cascade.detectMultiScale(image_array, 1.3, 5)
         for(x,y,w,h) in faces:
             roi = image_array[y:y+h, x:x+w]
@@ -36,4 +36,4 @@ for root, dirs, files in os.walk(image_dir):
 with open("labels.pickle", 'wb') as f:
     pickle.dump(label_ids, f)
 recognizer.train(x_train, np.array(y_labels))
-recognizer.save('traner.yml')
+recognizer.save('trainer.yml')
