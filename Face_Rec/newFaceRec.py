@@ -49,7 +49,7 @@ class RobotControl:
         print("Moving Forward 2 Feet")
         self.m.setTarget(LEFT_WHEEL_PORT, 7000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 7000)
-        time.sleep(2)
+        time.sleep(1)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
 
@@ -57,7 +57,7 @@ class RobotControl:
         print("Stranger Danger! Moving Backward 3 Feet")
         self.m.setTarget(LEFT_WHEEL_PORT, 5000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
-        time.sleep(3)
+        time.sleep(1)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
 
