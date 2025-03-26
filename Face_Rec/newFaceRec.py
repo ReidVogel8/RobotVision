@@ -83,7 +83,13 @@ def draw_eyes():
     canvas.create_oval(110, 20, 150, 60, fill="black")  # Right eye
 
 
+last_detected = None
+detection_start_time = None
+DETECTION_THRESHOLD = 2  # Time in seconds before triggering movement
+
 def recognize_faces():
+    global last_detected, detection_start_time
+
     while True:
         frames = pipeline.wait_for_frames()
         color_frame = frames.get_color_frame()
@@ -98,18 +104,37 @@ def recognize_faces():
         if len(faces) == 0:
             root.after(0, lambda: label_text.set("Looking..."))
             root.after(0, draw_eyes)
+            last_detected = None
+            detection_start_time = None
         else:
             for (x, y, w, h) in faces:
                 roi_gray = gray[y:y + h, x:x + w]
-
                 id_, confidence = recognizer.predict(roi_gray)
-                if confidence < 90:  # Confidence threshold (lower is better)
+
+                if confidence < 90:  # Face recognized
                     name = labels[id_]
                     root.after(0, lambda: label_text.set(f"Hello, {name}!"))
-                    #robot.move_forward()
-                else:
+
+                    if last_detected == name:
+                        if time.time() - detection_start_time >= DETECTION_THRESHOLD:
+                            print(f"Recognized {name} for 2 seconds. Moving forward.")
+                            robot.move_forward()
+                            last_detected = None  # Prevent multiple triggers
+                    else:
+                        last_detected = name
+                        detection_start_time = time.time()
+
+                else:  # Unknown face
                     root.after(0, lambda: label_text.set("Stranger Danger!"))
-                    #robot.move_backward()
+
+                    if last_detected == "stranger":
+                        if time.time() - detection_start_time >= DETECTION_THRESHOLD:
+                            print("Stranger detected for 2 seconds. Moving backward.")
+                            robot.move_backward()
+                            last_detected = None  # Prevent multiple triggers
+                    else:
+                        last_detected = "stranger"
+                        detection_start_time = time.time()
 
                 color = (0, 255, 0) if confidence < 50 else (0, 0, 255)
                 cv.rectangle(frame, (x, y), (x + w, y + h), color, 2)
