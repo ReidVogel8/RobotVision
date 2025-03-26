@@ -21,7 +21,7 @@ label_ids = {}
 y_labels = []
 x_train = []
 
-for root, dirs, files in os.walk(image_dir):
+for root, dirs, files in os.walk(IMAGE_DIR):
     for file in files:
         if file.endswith(("png", "jpg", "jfif")):  # Removed "heic"
             path = os.path.join(root, file)
