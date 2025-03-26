@@ -4,10 +4,6 @@ import os
 import numpy as np
 import pickle
 
-
-# Register HEIC support
-register_heif_opener()
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 image_dir = os.path.join(BASE_DIR, "Images/Hunter")
 
@@ -29,7 +25,7 @@ x_train = []
 
 for root, dirs, files in os.walk(image_dir):
     for file in files:
-        if file.endswith(("png", "jpg", "jfif", "heic")):  # Check first
+        if file.endswith(("png", "jpg", "jfif")):  # Removed "heic"
             path = os.path.join(root, file)
             label = os.path.basename(root).replace(" ", "_").lower()
 
