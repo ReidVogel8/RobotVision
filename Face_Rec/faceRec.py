@@ -5,7 +5,7 @@ import pyrealsense2 as rs
 import tkinter as tk
 from tkinter import Label
 import time
-from maestro import Controller  # Robot movement library
+from ../maestro import controller  # Robot movement library
 
 # Load trained recognizer and labels
 recognizer = cv.face.LBPHFaceRecognizer_create()
