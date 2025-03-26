@@ -7,7 +7,7 @@ import pickle
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Get script directory
 IMAGE_DIR = os.path.join(BASE_DIR, "Images")  # Path to images
 CASCADE_PATH = cv.data.haarcascades + "haarcascade_frontalface_default.xml"
-face_cascade = cv.CascadeClassifier(cascade_path)
+face_cascade = cv.CascadeClassifier(CASCADE_PATH)
 
 # Check if cascade loaded
 if face_cascade.empty():
