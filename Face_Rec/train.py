@@ -4,8 +4,8 @@ import os
 import numpy as np
 import pickle
 
-BASE_DIR = os.path.dirname(os.path.abspath("\Images\Hunter"))
-image_dir = os.path.join(BASE_DIR, "images")
+BASE_DIR = os.path.dirname(os.path.abspath("__file__"))
+image_dir = os.path.join(BASE_DIR, "Image/Hunter")
 
 face_cascade = cv.CascadeClassifier(BASE_DIR + 'haarcascade_frontalface_default.xml')
 recognizer = cv.face.LBPHFaceRecognizer_create()
