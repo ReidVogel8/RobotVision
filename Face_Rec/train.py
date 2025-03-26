@@ -23,11 +23,12 @@ for root, dirs, files in os.walk(image_dir):
         print(os.path.basename(root))
         print(label, path)
         if not label in label_ids:
-            if file.endswith("png") or file.endswith("jpg") or file.endswith("jfif") or file.endswith("heic"):
-                label_ids[label] = current_id
-                current_id += 1
-            id = label_ids[label]
-            print(label_ids)
+            if file.endswith(("png", "jpg", "jfif", "heic")):  # Check first
+                if label not in label_ids:
+                    label_ids[label] = current_id
+                    current_id += 1
+                id = label_ids[label]
+                print(label_ids)
             try:
                 pil_image = Image.open(path).convert("L")  # Convert to grayscale
             except Exception as e:
