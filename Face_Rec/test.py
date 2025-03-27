@@ -99,6 +99,9 @@ def recognize_faces():
         frame = np.asanyarray(color_frame.get_data())
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
+        # Histogram equalization to improve contrast
+        gray = cv.equalizeHist(gray)
+
         faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5, minSize=(50, 50))
 
         recognized_names = []
@@ -113,7 +116,9 @@ def recognize_faces():
                 roi_gray = gray[y:y + h, x:x + w]
                 id_, confidence = recognizer.predict(roi_gray)
 
-                if confidence < 70:  # Face recognized
+                print(f"Detected ID {id_} with confidence {confidence}")
+
+                if confidence < 85:  # Adjusted threshold to be more lenient
                     name = labels.get(id_, "Unknown")
                     recognized_names.append(name)
 
