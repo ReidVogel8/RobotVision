@@ -48,7 +48,7 @@ class RobotControl:
     def move_forward(self):
         print("Moving Forward 2 Feet")
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
-        self.m.setTarget(1, 5000)
+        self.m.setTarget(0, 5000)
         time.sleep(1)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
 
