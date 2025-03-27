@@ -4,8 +4,8 @@ import os
 import numpy as np
 import pickle
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Get script directory
-IMAGE_DIR = os.path.join(BASE_DIR, "Images")  # Path to images
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  
+IMAGE_DIR = os.path.join(BASE_DIR, "Images") 
 CASCADE_PATH = cv.data.haarcascades + "haarcascade_frontalface_default.xml"
 
 # Check if the images directory exists
