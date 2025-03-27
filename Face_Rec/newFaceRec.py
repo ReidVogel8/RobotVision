@@ -6,7 +6,7 @@ import tkinter as tk
 from tkinter import Label
 import time
 import threading
-from maestro import Controller  # Robot movement library
+from maestro import Controller 
 
 # Load trained recognizer and labels
 recognizer = cv.face.LBPHFaceRecognizer_create()
