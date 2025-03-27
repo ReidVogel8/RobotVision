@@ -11,11 +11,12 @@ recognizer.read("trainer.yml")
 with open("labels.pickle", "rb") as f:
     labels = pickle.load(f)
 reverse_labels = {v: k for k, v in labels.items()}  # Convert IDs to names
+#camera
+pipeline = rs.pipeline()
+config = rs.config()
+config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+pipeline.start(config)
 
-cap = cv2.VideoCapture(0)
-face_detected = False
-last_detected = None
-last_update_time = time.time()
 
 # Create Tkinter window
 root = tk.Tk()
