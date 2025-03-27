@@ -55,11 +55,10 @@ class RobotControl:
 
     def move_backward(self):
         print("Stranger Danger! Moving Backward 3 Feet")
-        self.m.setTarget(LEFT_WHEEL_PORT, 5000)
-        self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
+        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
+        self.m.setTarget(0, 7000)
         time.sleep(1)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
-        self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
 
 
 robot = RobotControl().getInst()
