@@ -46,6 +46,8 @@ class RobotControl:
         self.m = Controller()
 
     def move_forward(self):
+        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
+        self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         print("Moving Forward 2 Feet")
         self.m.setTarget(LEFT_WHEEL_PORT, 7000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 7000)
@@ -54,6 +56,8 @@ class RobotControl:
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
 
     def move_backward(self):
+        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
+        self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         print("Stranger Danger! Moving Backward 3 Feet")
         self.m.setTarget(LEFT_WHEEL_PORT, 5000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
@@ -85,7 +89,7 @@ def draw_eyes():
 
 last_detected = None
 detection_start_time = None
-DETECTION_THRESHOLD = 2  # Time in seconds before triggering movement
+DETECTION_THRESHOLD = 1  # Time in seconds before triggering movement
 
 def recognize_faces():
     global last_detected, detection_start_time
