@@ -8,7 +8,7 @@ from PIL import Image
 face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 
-data_path = "images/"
+data_path = "Images/"
 labels = {}
 current_id = 0
 x_train, y_labels = [], []
