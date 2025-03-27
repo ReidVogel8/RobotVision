@@ -2,6 +2,7 @@ import os
 import cv2
 import numpy as np
 import pickle
+import pyrealsense2 as rs
 from PIL import Image
 
 # Initialize face recognizer and detector
