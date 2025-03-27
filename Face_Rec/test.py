@@ -83,7 +83,7 @@ def draw_eyes():
 
 
 last_detected_faces = {}
-DETECTION_THRESHOLD = 2  # Time in seconds before triggering movement
+DETECTION_THRESHOLD = 1  # Time in seconds before triggering movement
 
 
 def recognize_faces():
