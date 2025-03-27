@@ -117,7 +117,7 @@ def recognize_faces():
 
                 print(f"Detected ID {id_} with confidence {confidence}")
 
-                if confidence < 75:  # Adjusted threshold to be more lenient
+                if confidence < 85:  # Adjusted threshold to be more lenient
                     name = labels.get(id_, "Unknown")
                     recognized_names.append(name)
 
