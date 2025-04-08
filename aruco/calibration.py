@@ -63,23 +63,27 @@ if len(objpoints) > 5:
     ret, camera_matrix, dist_coeffs, _, _ = cv2.calibrateCamera(
         objpoints, imgpoints, gray.shape[::-1], None, None)
 
-    # Save to pickle file
-    with open("calibration.pkl", "wb") as f:
-        pickle.dump({
-            'camera_matrix': camera_matrix,
-            'dist_coeffs': dist_coeffs
-        }, f)
+    # Check if calibration was successful
+    if ret:
+        # Save to pickle file
+        with open("calibration.pkl", "wb") as f:
+            pickle.dump({
+                'camera_matrix': camera_matrix,
+                'dist_coeffs': dist_coeffs
+            }, f)
 
-    print("\n✅ Calibration saved to calibration.pkl")
+        print("\n✅ Calibration saved to calibration.pkl")
 
-    # === Pretty-print for Python ===
-    print("\nCamera Matrix (Python format):")
-    print("[")
-    for row in camera_matrix:
-        print("  [" + ", ".join(f"{val:.6f}" for val in row) + "],")
-    print("]")
+        # === Pretty-print for Python ===
+        print("\nCamera Matrix (Python format):")
+        print("[")
+        for row in camera_matrix:
+            print("  [" + ", ".join(f"{val:.6f}" for val in row) + "],")
+        print("]")
 
-    print("\nDistortion Coefficients (Python format):")
-    print("[" + ", ".join(f"{val:.6f}" for val in dist_coeffs.flatten()) + "]")
+        print("\nDistortion Coefficients (Python format):")
+        print("[" + ", ".join(f"{val:.6f}" for val in dist_coeffs.flatten()) + "]")
+    else:
+        print("❌ Calibration failed. Camera matrix is invalid.")
 else:
     print("❌ Not enough frames captured for calibration.")
