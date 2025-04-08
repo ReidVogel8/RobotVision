@@ -45,8 +45,10 @@ try:
         if key == ord('c') and ret:
             print("Captured frame.")
             objpoints.append(objp)
-            corners2 = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1),
-                                         criteria=(cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001))
+            corners2 = cv2.cornerSubPix(
+                gray, corners, (11, 11), (-1, -1),
+                criteria=(cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+            )
             imgpoints.append(corners2)
         elif key == ord('q'):
             break
@@ -61,14 +63,23 @@ if len(objpoints) > 5:
     ret, camera_matrix, dist_coeffs, _, _ = cv2.calibrateCamera(
         objpoints, imgpoints, gray.shape[::-1], None, None)
 
+    # Save to pickle file
     with open("calibration.pkl", "wb") as f:
         pickle.dump({
             'camera_matrix': camera_matrix,
             'dist_coeffs': dist_coeffs
         }, f)
 
-    print("Calibration saved to calibration.pkl")
-    print("Camera Matrix:\n", camera_matrix)
-    print("Distortion Coefficients:\n", dist_coeffs)
+    print("\n✅ Calibration saved to calibration.pkl")
+
+    # === Pretty-print for Python ===
+    print("\nCamera Matrix (Python format):")
+    print("[")
+    for row in camera_matrix:
+        print("  [" + ", ".join(f"{val:.6f}" for val in row) + "],")
+    print("]")
+
+    print("\nDistortion Coefficients (Python format):")
+    print("[" + ", ".join(f"{val:.6f}" for val in dist_coeffs.flatten()) + "]")
 else:
-    print("Not enough frames captured for calibration.")
+    print("❌ Not enough frames captured for calibration.")
