@@ -5,9 +5,11 @@ import pickle
 import time
 from maestro import Controller
 
-# Load calibration data
+# Load calibration data from the pickle file
 with open("calibration.pkl", "rb") as f:
-    camera_matrix, dist_coeffs = pickle.load(f)
+    calibration_data = pickle.load(f)
+    camera_matrix = calibration_data['camera_matrix']
+    dist_coeffs = calibration_data['dist_coeffs']
 
 # ArUco setup
 aruco_dict = cv.aruco.getPredefinedDictionary(cv.aruco.DICT_4X4_50)
@@ -28,42 +30,61 @@ LEFT_WHEEL_PORT = 0
 RIGHT_WHEEL_PORT = 1
 
 class RobotControl:
+    _instance = None
+
+    @staticmethod
+    def getInst():
+        if RobotControl._instance is None:
+            RobotControl._instance = RobotControl()
+        return RobotControl._instance
+
     def __init__(self):
         self.m = Controller()
 
-    def move_forward(self, duration=1):
-        self.m.setTarget(LEFT_WHEEL_PORT, 7000)
-        self.m.setTarget(RIGHT_WHEEL_PORT, 7000)
-        time.sleep(duration)
-        self.stop()
-
-    def move_backward(self, duration=1):
-        self.m.setTarget(LEFT_WHEEL_PORT, 5000)
-        self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
-        time.sleep(duration)
-        self.stop()
-
-    def turn_left(self, duration=0.5):
-        self.m.setTarget(LEFT_WHEEL_PORT, 5000)
-        self.m.setTarget(RIGHT_WHEEL_PORT, 7000)
-        time.sleep(duration)
-        self.stop()
-
-    def turn_right(self, duration=0.5):
-        self.m.setTarget(LEFT_WHEEL_PORT, 7000)
-        self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
-        time.sleep(duration)
-        self.stop()
+    def start(self):
+        print("start")
 
     def pan_left(self):
-        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 5000)
-
+        print("turn head left")
+        
     def pan_right(self):
-        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 7000)
+        print("turn head right")
+        
+    def turn_left(self):
+        print("turn Left")
+        
+    def turn_right(self):
+        print("turn Right")
+        
+    def move_forward(self):
+        print("Moving Forward 2 Feet")
+        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
+        self.m.setTarget(0, 5000)
+        time.sleep(1)
+        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
 
-    def stop(self):
-        self.m.setTarget(LEFT_WHEEL_PORT, MIDDLE)
-        self.m.setTarget(RIGHT_WHEEL_PORT, MIDDLE)
+    def move_backward(self):
+        print("Stranger Danger! Moving Backward 3 Feet")
+        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
+        self.m.setTarget(0, 7000)
+        time.sleep(1)
+        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
+
+# Function to calculate camera position relative to the marker
+def get_camera_position_from_marker(marker_world_pos, rvec, tvec):
+    R_ct, _ = cv.Rodrigues(rvec)
+    tvec = tvec.reshape((3, 1))
+
+    # Invert the transformation (Rotation and Translation)
+    R_tc = R_ct.T
+    t_tc = -np.dot(R_tc, tvec)
+
+    marker_x, marker_y = marker_world_pos
+    marker_world = np.array([[marker_x], [marker_y], [0.0]])
+
+    # Camera position in world coordinates
+    camera_world = marker_world + t_tc[0:3]
+    return float(camera_world[0]), float(camera_world[1])
 
 robot = RobotControl()
 visited_ids = set()
@@ -86,13 +107,22 @@ try:
                 if id_num in visited_ids:
                     continue
 
+                # Estimate pose of the marker
                 rvec, tvec, _ = cv.aruco.estimatePoseSingleMarkers(corners[i], 0.055, camera_matrix, dist_coeffs)
                 cv.drawFrameAxes(frame, camera_matrix, dist_coeffs, rvec, tvec, 0.03)
-                x, z = tvec[0][0][0], tvec[0][0][2]
-                cx = corners[i][0][:, 0].mean()
-                frame_center_x = frame.shape[1] // 2
 
-                print(f"Detected Marker ID: {id_num}, X: {x:.2f}m, Z: {z:.2f}m")
+                # Get the position of the camera relative to the marker
+                x, z = tvec[0][0][0], tvec[0][0][2]
+
+                # Get camera position in world coordinates
+                marker_world_pos = (x, z)
+                camera_x, camera_z = get_camera_position_from_marker(marker_world_pos, rvec, tvec)
+
+                print(f"Detected Marker ID: {id_num}, Camera X: {camera_x:.2f}m, Camera Z: {camera_z:.2f}m")
+
+                # Determine robot movement based on camera position relative to marker
+                frame_center_x = frame.shape[1] // 2
+                cx = corners[i][0][:, 0].mean()
 
                 # Pan to keep centered
                 if cx < frame_center_x - 30:
@@ -100,17 +130,20 @@ try:
                 elif cx > frame_center_x + 30:
                     robot.pan_right()
 
-                # Navigation logic
-                if id_num % 2 == 0:
-                    print("Passing on right")
-                    robot.turn_right()
-                    robot.move_forward()
-                    robot.turn_left()
-                else:
-                    print("Passing on left")
+                # Navigation logic based on camera position
+                if camera_x < 0:  # Assuming robot is left of the marker
+                    print("Turning Left")
                     robot.turn_left()
                     robot.move_forward()
                     robot.turn_right()
+                elif camera_x > 0:  # Assuming robot is right of the marker
+                    print("Turning Right")
+                    robot.turn_right()
+                    robot.move_forward()
+                    robot.turn_left()
+                else:  # Robot is centered in front of marker
+                    print("Going Forward")
+                    robot.move_forward()
 
                 visited_ids.add(id_num)
 
