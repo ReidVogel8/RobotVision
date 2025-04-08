@@ -41,6 +41,22 @@ class RobotControl:
     def __init__(self):
         self.m = Controller()
 
+    def start(self):
+        print("start")
+
+    def pan_left(self):
+        print("turn head left")
+        
+    def pan_right(self):
+        print("turn head right ")
+        
+    def turn_left(self):
+        print("turn Left")
+        
+    def turn_right(self):
+        print("turn Right")
+        
+        
     def move_forward(self):
         print("Moving Forward 2 Feet")
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
@@ -88,30 +104,30 @@ try:
 
                 # Pan to keep centered
                 if cx < frame_center_x - 30:
-                    #RobotControl.pan_left()
+                    RobotControl.pan_left()
                 elif cx > frame_center_x + 30:
-                    #obotControl.pan_right()
+                    obotControl.pan_right()
 
                 # Navigation logic
                 if id_num % 2 == 0:
                     print("Passing on right")
-                    #RobotControl.start()
-                    #RobotControl.turn_right()
+                    RobotControl.start()
+                    RobotControl.turn_right()
                     RobotControl.move_forward()
-                    #RobotControl.turn_left()
+                    RobotControl.turn_left()
                 else:
                     print("Passing on left")
-                    #RobotControl.start()
-                    #RobotControl.turn_left()
+                    RobotControl.start()
+                    RobotControl.turn_left()
                     RobotControl.move_forward()
-                    #RobotControl.turn_right()
+                    RobotControl.turn_right()
 
                 visited_ids.add(id_num)
 
                 # Stop condition
                 if len(visited_ids) >= 4:
                     print("Finished")
-                    #RobotControl.stop()
+                    RobotControl.stop()
                     raise KeyboardInterrupt
 
         cv.imshow("ArUco Navigation", frame)
