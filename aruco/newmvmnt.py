@@ -144,11 +144,17 @@ try:
                     robot.turn_right()
                     robot.move_forward()
                     robot.turn_right()
+                    robot.move_forward()
+                    robot.turn_left()
                 elif camera_x > 0:  # Assuming robot is right of the marker
                     print("Turning Right")
                     robot.turn_right()
                     robot.move_forward()
                     robot.turn_left()
+                    robot.move_forwared()
+                    robot.turn_left()
+                    robot.move_forward()
+                    robot.turn_right()
                 else:  # Robot is centered in front of marker
                     print("Going Forward")
                     robot.move_forward()
