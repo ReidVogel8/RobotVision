@@ -106,7 +106,7 @@ try:
                 if cx < frame_center_x - 30:
                     RobotControl.pan_left()
                 elif cx > frame_center_x + 30:
-                    obotControl.pan_right()
+                    RobotControl.pan_right()
 
                 # Navigation logic
                 if id_num % 2 == 0:
