@@ -64,7 +64,6 @@ class RobotControl:
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
 
     def move_backward(self):
-        print("Stranger Danger! Moving Backward 3 Feet")
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
         self.m.setTarget(0, 7000)
         time.sleep(1)
