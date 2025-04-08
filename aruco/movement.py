@@ -13,23 +13,23 @@ def load_calibration(file_path='calibration.npz'):
 # === Movement Functions ===
 def move_forward():
     print("[Move] Forward")
-    maestro.forward()  # Assuming your maestro module has this
+    self.m.forward()  # Assuming your maestro module has this
 
 def turn_left():
     print("[Move] Turn Left")
-    maestro.left()
+    self.m.left()
 
 def turn_right():
     print("[Move] Turn Right")
-    maestro.right()
+    self.m.right()
 
 def stop_robot():
     print("[Move] Stop")
-    maestro.stop()
+    self.m.stop()
 
 def center_pan_tilt():
-    maestro.setTarget(0, 6000)  # Pan center
-    maestro.setTarget(1, 6000)  # Tilt center
+    self.m.setTarget(0, 6000)  # Pan center
+    self.m.setTarget(1, 6000)  # Tilt center
 
 # === Estimate robot's X, Y from marker pose ===
 def get_xy_from_pose(tvec):
