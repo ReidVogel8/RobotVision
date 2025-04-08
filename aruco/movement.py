@@ -104,30 +104,30 @@ try:
 
                 # Pan to keep centered
                 if cx < frame_center_x - 30:
-                    RobotControl.pan_left()
+                    robot.pan_left()
                 elif cx > frame_center_x + 30:
-                    RobotControl.pan_right()
+                    robot.pan_right()
 
                 # Navigation logic
                 if id_num % 2 == 0:
                     print("Passing on right")
-                    RobotControl.start()
-                    RobotControl.turn_right()
-                    RobotControl.move_forward()
-                    RobotControl.turn_left()
+                    robot.start()
+                    robot.turn_right()
+                    robot.move_forward()
+                    robot.turn_left()
                 else:
                     print("Passing on left")
-                    RobotControl.start()
-                    RobotControl.turn_left()
-                    RobotControl.move_forward()
-                    RobotControl.turn_right()
+                    robot.start()
+                    robot.turn_left()
+                    robot.move_forward()
+                    robot.turn_right()
 
                 visited_ids.add(id_num)
 
                 # Stop condition
                 if len(visited_ids) >= 4:
                     print("Finished")
-                    RobotControl.stop()
+                    robot.stop()
                     raise KeyboardInterrupt
 
         cv.imshow("ArUco Navigation", frame)
