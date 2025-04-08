@@ -109,23 +109,23 @@ try:
                 # Navigation logic
                 if id_num % 2 == 0:
                     print("Passing on right")
-                    RobotControl.start()
-                    RobotControl.turn_right()
-                    RobotControl.move_forward()
-                    RobotControl.turn_left()
+                    RobotControl.start(self)
+                    RobotControl.turn_right(self)
+                    RobotControl.move_forward(self)
+                    RobotControl.turn_left(self)
                 else:
                     print("Passing on left")
-                    RobotControl.start()
-                    RobotControl.turn_left()
-                    RobotControl.move_forward()
-                    RobotControl.turn_right()
+                    RobotControl.start(self)
+                    RobotControl.turn_left(self)
+                    RobotControl.move_forward(self)
+                    RobotControl.turn_right(self)
 
                 visited_ids.add(id_num)
 
                 # Stop condition
                 if len(visited_ids) >= 4:
                     print("Finished")
-                    RobotControl.stop()
+                    RobotControl.stop(self)
                     raise KeyboardInterrupt
 
         cv.imshow("ArUco Navigation", frame)
