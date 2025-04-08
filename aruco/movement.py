@@ -1,121 +1,132 @@
-import cv2
+import cv2 as cv
 import numpy as np
 import pyrealsense2 as rs
+import pickle
 import time
-import math
-from maestro import Controller 
+from maestro import Controller
 
-# === Load Camera Calibration ===
-def load_calibration(file_path='calibration.npz'):
-    data = np.load(file_path)
-    return data['camera_matrix'], data['dist_coeffs']
+# Load calibration data from the pickle file
+with open("calibration.pkl", "rb") as f:
+    calibration_data = pickle.load(f)
+    camera_matrix = calibration_data['camera_matrix']
+    dist_coeffs = calibration_data['dist_coeffs']
 
-# === Movement Functions ===
-def move_forward():
-    print("[Move] Forward")
-    self.m.forward()  # Assuming your maestro module has this
+# ArUco setup
+aruco_dict = cv.aruco.getPredefinedDictionary(cv.aruco.DICT_4X4_50)
+parameters = cv.aruco.DetectorParameters()
+detector = cv.aruco.ArucoDetector(aruco_dict, parameters)
 
-def turn_left():
-    print("[Move] Turn Left")
-    self.m.left()
+# RealSense setup
+pipeline = rs.pipeline()
+config = rs.config()
+config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+pipeline.start(config)
 
-def turn_right():
-    print("[Move] Turn Right")
-    self.m.right()
+# Robot setup
+MIDDLE = 6000
+HEAD_UP_DOWN_PORT = 4
+HEAD_LEFT_RIGHT_PORT = 2
+LEFT_WHEEL_PORT = 0
+RIGHT_WHEEL_PORT = 1
 
-def stop_robot():
-    print("[Move] Stop")
-    self.m.stop()
+class RobotControl:
+    def __init__(self):
+        self.m = Controller()
 
-def center_pan_tilt():
-    self.m.setTarget(0, 6000)  # Pan center
-    self.m.setTarget(1, 6000)  # Tilt center
+    def move_forward(self, duration=1):
+        self.m.setTarget(LEFT_WHEEL_PORT, 7000)
+        self.m.setTarget(RIGHT_WHEEL_PORT, 7000)
+        time.sleep(duration)
+        self.stop()
 
-# === Estimate robot's X, Y from marker pose ===
-def get_xy_from_pose(tvec):
-    return tvec[0][0], tvec[0][2]  # X (sideways), Z (forward)
+    def move_backward(self, duration=1):
+        self.m.setTarget(LEFT_WHEEL_PORT, 5000)
+        self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
+        time.sleep(duration)
+        self.stop()
 
-# === Main Vision + Navigation ===
-def main():
-    # Load calibration
-    camera_matrix, dist_coeffs = load_calibration()
+    def turn_left(self, duration=0.5):
+        self.m.setTarget(LEFT_WHEEL_PORT, 5000)
+        self.m.setTarget(RIGHT_WHEEL_PORT, 7000)
+        time.sleep(duration)
+        self.stop()
 
-    # Set up RealSense
-    pipeline = rs.pipeline()
-    config = rs.config()
-    config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
-    pipeline.start(config)
+    def turn_right(self, duration=0.5):
+        self.m.setTarget(LEFT_WHEEL_PORT, 7000)
+        self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
+        time.sleep(duration)
+        self.stop()
 
-    # Set up ArUco
-    aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
-    parameters = cv2.aruco.DetectorParameters()
-    detector = cv2.aruco.ArucoDetector(aruco_dict, parameters)
+    def pan_left(self):
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 5000)
 
-    # Marker tracking
-    marker_ids_seen = set()
-    final_marker_id = 11
+    def pan_right(self):
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 7000)
 
-    try:
-        center_pan_tilt()
+    def stop(self):
+        self.m.setTarget(LEFT_WHEEL_PORT, MIDDLE)
+        self.m.setTarget(RIGHT_WHEEL_PORT, MIDDLE)
 
-        while True:
-            frames = pipeline.wait_for_frames()
-            color_frame = frames.get_color_frame()
-            if not color_frame:
-                continue
-            frame = np.asanyarray(color_frame.get_data())
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+robot = RobotControl()
+visited_ids = set()
 
-            corners, ids, _ = detector.detectMarkers(gray)
+try:
+    while True:
+        frames = pipeline.wait_for_frames()
+        color_frame = frames.get_color_frame()
+        if not color_frame:
+            continue
 
-            if ids is not None:
-                for i, marker_id in enumerate(ids.flatten()):
-                    if marker_id not in [8, 9, 10, 11]:
-                        continue
+        frame = np.asanyarray(color_frame.get_data())
+        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
-                    rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(
-                        corners[i], 0.055, camera_matrix, dist_coeffs
-                    )
-                    cv2.aruco.drawAxis(frame, camera_matrix, dist_coeffs, rvec, tvec, 0.03)
+        corners, ids, _ = detector.detectMarkers(gray)
+        if ids is not None:
+            cv.aruco.drawDetectedMarkers(frame, corners, ids)
+            for i in range(len(ids)):
+                id_num = int(ids[i][0])
+                if id_num in visited_ids:
+                    continue
 
-                    x, z = get_xy_from_pose(tvec)
-                    print(f"Marker {marker_id} | X: {x:.2f} ft, Z: {z:.2f} ft")
+                rvec, tvec, _ = cv.aruco.estimatePoseSingleMarkers(corners[i], 0.055, camera_matrix, dist_coeffs)
+                cv.drawFrameAxes(frame, camera_matrix, dist_coeffs, rvec, tvec, 0.03)
+                x, z = tvec[0][0][0], tvec[0][0][2]
+                cx = corners[i][0][:, 0].mean()
+                frame_center_x = frame.shape[1] // 2
 
-                    # Center pan servo
-                    center_x = np.mean(corners[i][0][:, 0])
-                    error = center_x - frame.shape[1] / 2
-                    pan_value = int(6000 + error * 4)  # Adjust multiplier if needed
-                    maestro.setTarget(0, pan_value)
+                print(f"Detected Marker ID: {id_num}, X: {x:.2f}m, Z: {z:.2f}m")
 
-                    # Decide side to pass
-                    direction = "left" if marker_id % 2 == 1 else "right"
-                    print(f"→ Passing marker {marker_id} on the {direction}")
+                # Pan to keep centered
+                if cx < frame_center_x - 30:
+                    robot.pan_left()
+                elif cx > frame_center_x + 30:
+                    robot.pan_right()
 
-                    if direction == "left":
-                        turn_left()
-                    else:
-                        turn_right()
+                # Navigation logic
+                if id_num % 2 == 0:
+                    print("Passing on right")
+                    robot.turn_right()
+                    robot.move_forward()
+                    robot.turn_left()
+                else:
+                    print("Passing on left")
+                    robot.turn_left()
+                    robot.move_forward()
+                    robot.turn_right()
 
-                    move_forward()
-                    time.sleep(1.5)
-                    stop_robot()
+                visited_ids.add(id_num)
 
-                    marker_ids_seen.add(marker_id)
+                # Stop condition
+                if len(visited_ids) >= 4:
+                    print("Finished")
+                    robot.stop()
+                    raise KeyboardInterrupt
 
-                    if final_marker_id in marker_ids_seen:
-                        stop_robot()
-                        print("Finished ✅")
-                        return
+        cv.imshow("ArUco Navigation", frame)
+        if cv.waitKey(1) & 0xFF == ord('q'):
+            break
 
-            cv2.imshow("ArUco Navigation", frame)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-
-    finally:
-        pipeline.stop()
-        center_pan_tilt()
-        stop_robot()
-        cv2.destroyAllWindows()
-
-if __name__ == "__main__":
-    main()
+except KeyboardInterrupt:
+    print("Stopped by user")
+finally:
+    pipeline.stop()
