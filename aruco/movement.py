@@ -30,46 +30,32 @@ LEFT_WHEEL_PORT = 0
 RIGHT_WHEEL_PORT = 1
 
 class RobotControl:
+    _instance = None
+
+    @staticmethod
+    def getInst():
+        if RobotControl._instance is None:
+            RobotControl._instance = RobotControl()
+        return RobotControl._instance
+
     def __init__(self):
         self.m = Controller()
 
-    def start(self):
-        self.m.setTarget(LEFT_WHEEL_PORT, MIDDLE)
-        self.m.setTarget(RIGHT_WHEEL_PORT, MIDDLE)
-        
     def move_forward(self):
-        self.m.setTarget(LEFT_WHEEL_PORT, 7000)
-        self.m.setTarget(RIGHT_WHEEL_PORT, 7000)
+        print("Moving Forward 2 Feet")
+        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
+        self.m.setTarget(0, 5000)
         time.sleep(1)
-        self.stop()
+        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
+
 
     def move_backward(self):
-        self.m.setTarget(LEFT_WHEEL_PORT, 5000)
-        self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
+        print("Stranger Danger! Moving Backward 3 Feet")
+        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
+        self.m.setTarget(0, 7000)
         time.sleep(1)
-        self.stop()
+        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
 
-    def turn_left(self):
-        self.m.setTarget(LEFT_WHEEL_PORT, 5000)
-        self.m.setTarget(RIGHT_WHEEL_PORT, 7000)
-        time.sleep(1)
-        self.stop()
-
-    def turn_right(self):
-        self.m.setTarget(LEFT_WHEEL_PORT, 7000)
-        self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
-        time.sleep(1)
-        self.stop()
-
-    def pan_left(self):
-        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 5000)
-
-    def pan_right(self):
-        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 7000)
-
-    def stop(self):
-        self.m.setTarget(LEFT_WHEEL_PORT, MIDDLE)
-        self.m.setTarget(RIGHT_WHEEL_PORT, MIDDLE)
 
 robot = RobotControl()
 visited_ids = set()
@@ -102,30 +88,30 @@ try:
 
                 # Pan to keep centered
                 if cx < frame_center_x - 30:
-                    RobotControl.pan_left()
+                    #RobotControl.pan_left()
                 elif cx > frame_center_x + 30:
-                    RobotControl.pan_right()
+                    #obotControl.pan_right()
 
                 # Navigation logic
                 if id_num % 2 == 0:
                     print("Passing on right")
-                    RobotControl.start()
-                    RobotControl.turn_right()
+                    #RobotControl.start()
+                    #RobotControl.turn_right()
                     RobotControl.move_forward()
-                    RobotControl.turn_left()
+                    #RobotControl.turn_left()
                 else:
                     print("Passing on left")
-                    RobotControl.start()
-                    RobotControl.turn_left()
+                    #RobotControl.start()
+                    #RobotControl.turn_left()
                     RobotControl.move_forward()
-                    RobotControl.turn_right()
+                    #RobotControl.turn_right()
 
                 visited_ids.add(id_num)
 
                 # Stop condition
                 if len(visited_ids) >= 4:
                     print("Finished")
-                    RobotControl.stop()
+                    #RobotControl.stop()
                     raise KeyboardInterrupt
 
         cv.imshow("ArUco Navigation", frame)
