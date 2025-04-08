@@ -33,28 +33,32 @@ class RobotControl:
     def __init__(self):
         self.m = Controller()
 
-    def move_forward(self, duration=1):
+    def start(self):
+        self.m.setTarget(LEFT_WHEEL_PORT, MIDDLE)
+        self.m.setTarget(RIGHT_WHEEL_PORT, MIDDLE)
+        
+    def move_forward(self):
         self.m.setTarget(LEFT_WHEEL_PORT, 7000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 7000)
-        time.sleep(duration)
+        time.sleep(1)
         self.stop()
 
-    def move_backward(self, duration=1):
+    def move_backward(self):
         self.m.setTarget(LEFT_WHEEL_PORT, 5000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
-        time.sleep(duration)
+        time.sleep(1)
         self.stop()
 
-    def turn_left(self, duration=0.5):
+    def turn_left(self):
         self.m.setTarget(LEFT_WHEEL_PORT, 5000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 7000)
-        time.sleep(duration)
+        time.sleep(1)
         self.stop()
 
-    def turn_right(self, duration=0.5):
+    def turn_right(self):
         self.m.setTarget(LEFT_WHEEL_PORT, 7000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
-        time.sleep(duration)
+        time.sleep(1)
         self.stop()
 
     def pan_left(self):
