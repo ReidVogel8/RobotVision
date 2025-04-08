@@ -6,8 +6,8 @@ import time
 from maestro import Controller
 
 # Load calibration data
-#with open("calibration.pkl", "rb") as f:
-    #camera_matrix, dist_coeffs = pickle.load(f)
+with open("calibration.pkl", "rb") as f:
+    camera_matrix, dist_coeffs = pickle.load(f)
 
 # ArUco setup
 aruco_dict = cv.aruco.getPredefinedDictionary(cv.aruco.DICT_4X4_50)
