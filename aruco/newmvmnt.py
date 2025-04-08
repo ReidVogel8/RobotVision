@@ -144,6 +144,7 @@ try:
 
                 # Navigation logic based on camera position
                 if id_num % 2 == 0:  # Assuming robot is left of the marker
+                    print(id_num)
                     print("Turning Left")
                     robot.turn_left()
                     robot.move_forward()
@@ -153,6 +154,7 @@ try:
                     robot.move_forward()
                     robot.turn_left()
                 elif id_num % 2 != 0:  # Assuming robot is right of the marker
+                    print(id_num)
                     print("Turning Right")
                     robot.turn_right()
                     robot.move_forward()
