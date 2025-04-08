@@ -3,7 +3,7 @@ import numpy as np
 import pyrealsense2 as rs
 import time
 import math
-import maestro  # Your external servo/movement module
+from maestro import Controller 
 
 # === Load Camera Calibration ===
 def load_calibration(file_path='calibration.npz'):
