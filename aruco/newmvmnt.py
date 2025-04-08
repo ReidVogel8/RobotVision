@@ -45,16 +45,16 @@ class RobotControl:
         print("start")
 
     def pan_left(self):
-        self.m.setTartget(HEAD_LEFT_RIGHT_PORT, 6000)
-        self.m.setTartget(HEAD_LEFT_RIGHT_PORT, 5000)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 5000)
         time.sleep(.5)
-        self.m.setTartget(HEAD_LEFT_RIGHT_PORT, 6000)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
         
     def pan_right(self):
-        self.m.setTartget(HEAD_LEFT_RIGHT_PORT, 6000)
-        self.m.setTartget(HEAD_LEFT_RIGHT_PORT, 7000)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 7000)
         time.sleep(.5)
-        self.m.setTartget(HEAD_LEFT_RIGHT_PORT, 6000)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
         
     def turn_left(self):
         print("left")
