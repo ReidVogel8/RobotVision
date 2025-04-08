@@ -73,7 +73,7 @@ class RobotControl:
     def move_forward(self):
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
         self.m.setTarget(0, 5000)
-        time.sleep(.6)
+        time.sleep(.5)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
 
     def move_backward(self):
