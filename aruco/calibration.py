@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import pyrealsense2 as rs
+import pickle
 
 # === Checkerboard Settings ===
 CHECKERBOARD = (8, 6)           # Inner corners (columns, rows)
@@ -60,8 +61,13 @@ if len(objpoints) > 5:
     ret, camera_matrix, dist_coeffs, _, _ = cv2.calibrateCamera(
         objpoints, imgpoints, gray.shape[::-1], None, None)
 
-    np.savez("calibration.npz", camera_matrix=camera_matrix, dist_coeffs=dist_coeffs)
-    print("Calibration saved to calibration.npz")
+    with open("calibration.pkl", "wb") as f:
+        pickle.dump({
+            'camera_matrix': camera_matrix,
+            'dist_coeffs': dist_coeffs
+        }, f)
+
+    print("Calibration saved to calibration.pkl")
     print("Camera Matrix:\n", camera_matrix)
     print("Distortion Coefficients:\n", dist_coeffs)
 else:
