@@ -116,9 +116,6 @@ try:
             cv.aruco.drawDetectedMarkers(frame, corners, ids)
             for i in range(len(ids)):
                 id_num = int(ids[i][0])
-                if id_num in visited_ids:
-                    continue
-
                 # Estimate pose of the marker
                 rvec, tvec, _ = cv.aruco.estimatePoseSingleMarkers(corners[i], 0.055, camera_matrix, dist_coeffs)
                 cv.drawFrameAxes(frame, camera_matrix, dist_coeffs, rvec, tvec, 0.03)
@@ -163,10 +160,6 @@ try:
                 visited_ids.add(id_num)
 
                 # Stop condition
-                if len(visited_ids) >= 4:
-                    print("Finished")
-                    robot.stop()
-                    raise KeyboardInterrupt
 
         cv.imshow("ArUco Navigation", frame)
         if cv.waitKey(1) & 0xFF == ord('q'):
