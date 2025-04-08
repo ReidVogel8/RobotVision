@@ -54,14 +54,14 @@ class RobotControl:
         print("left")
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 7000)
-        time.sleep(1)
+        time.sleep(1.2)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         
     def turn_right(self):
         print("right")
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
-        time.sleep(1)
+        time.sleep(1.2)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         
     def move_forward(self):
