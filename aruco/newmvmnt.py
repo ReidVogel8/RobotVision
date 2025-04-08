@@ -151,7 +151,7 @@ try:
                     robot.turn_right()
                     robot.move_forward()
                     robot.turn_left()
-                    robot.move_forwared()
+                    robot.move_forward()
                     robot.turn_left()
                     robot.move_forward()
                     robot.turn_right()
