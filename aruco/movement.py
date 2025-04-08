@@ -45,33 +45,58 @@ class RobotControl:
         print("start")
 
     def pan_left(self):
-        print("turn head left")
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 5000)
+        time.sleep(.5)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
         
     def pan_right(self):
-        print("turn head right ")
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 7000)
+        time.sleep(.5)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
         
     def turn_left(self):
-        print("turn Left")
+        print("left")
+        self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
+        self.m.setTarget(RIGHT_WHEEL_PORT, 7000)
+        time.sleep(.9)
+        self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         
     def turn_right(self):
-        print("turn Right")
-        
+        print("right")
+        self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
+        self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
+        time.sleep(.9)
+        self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         
     def move_forward(self):
-        print("Moving Forward 2 Feet")
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
         self.m.setTarget(0, 5000)
-        time.sleep(1)
+        time.sleep(1.25)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
-
 
     def move_backward(self):
-        print("Stranger Danger! Moving Backward 3 Feet")
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
         self.m.setTarget(0, 7000)
-        time.sleep(1)
+        time.sleep(1.25)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
 
+# Function to calculate camera position relative to the marker
+def get_camera_position_from_marker(marker_world_pos, rvec, tvec):
+    R_ct, _ = cv.Rodrigues(rvec)
+    tvec = tvec.reshape((3, 1))
+
+    # Invert the transformation (Rotation and Translation)
+    R_tc = R_ct.T
+    t_tc = -np.dot(R_tc, tvec)
+
+    marker_x, marker_y = marker_world_pos
+    marker_world = np.array([[marker_x], [marker_y], [0.0]])
+
+    # Camera position in world coordinates
+    camera_world = marker_world + t_tc[0:3]
+    return float(camera_world[0]), float(camera_world[1])
 
 robot = RobotControl()
 visited_ids = set()
@@ -94,13 +119,22 @@ try:
                 if id_num in visited_ids:
                     continue
 
+                # Estimate pose of the marker
                 rvec, tvec, _ = cv.aruco.estimatePoseSingleMarkers(corners[i], 0.055, camera_matrix, dist_coeffs)
                 cv.drawFrameAxes(frame, camera_matrix, dist_coeffs, rvec, tvec, 0.03)
-                x, z = tvec[0][0][0], tvec[0][0][2]
-                cx = corners[i][0][:, 0].mean()
-                frame_center_x = frame.shape[1] // 2
 
-                print(f"Detected Marker ID: {id_num}, X: {x:.2f}m, Z: {z:.2f}m")
+                # Get the position of the camera relative to the marker
+                x, z = tvec[0][0][0], tvec[0][0][2]
+
+                # Get camera position in world coordinates
+                marker_world_pos = (x, z)
+                camera_x, camera_z = get_camera_position_from_marker(marker_world_pos, rvec, tvec)
+
+                print(f"Detected Marker ID: {id_num}, Camera X: {camera_x:.2f}m, Camera Z: {camera_z:.2f}m")
+
+                # Determine robot movement based on camera position relative to marker
+                frame_center_x = frame.shape[1] // 2
+                cx = corners[i][0][:, 0].mean()
 
                 # Pan to keep centered
                 if cx < frame_center_x - 30:
@@ -108,19 +142,23 @@ try:
                 elif cx > frame_center_x + 30:
                     robot.pan_right()
 
-                # Navigation logic
-                if id_num % 2 == 0:
-                    print("Passing on right")
-                    robot.start()
-                    robot.turn_right()
-                    robot.move_forward()
-                    robot.turn_left()
+                # Navigation logic based on camera position relative to marker
+                if id_num % 2 != 0:
+                    if x < 0:  # Marker to the left
+                        print("Marker on the Left")
+                        robot.turn_left()
+                        robot.move_forward()
+                        robot.turn_right()
+                    else:
+                        robot.move_forward()
                 else:
-                    print("Passing on left")
-                    robot.start()
-                    robot.turn_left()
-                    robot.move_forward()
-                    robot.turn_right()
+                    if x > 0:  # Marker to the right
+                        print("Marker on the Right")
+                        robot.turn_right()
+                        robot.move_forward()
+                        robot.turn_left()
+                    else:
+                        robot.move_forward()
 
                 visited_ids.add(id_num)
 
@@ -138,3 +176,4 @@ except KeyboardInterrupt:
     print("Stopped by user")
 finally:
     pipeline.stop()
+    cv.destroyAllWindows()
