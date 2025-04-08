@@ -101,6 +101,14 @@ def get_camera_position_from_marker(marker_world_pos, rvec, tvec):
 robot = RobotControl()
 visited_ids = set()
 
+# Function to check if the robot has passed the marker based on the camera's position
+def passed_marker(camera_x):
+    return camera_x > 0  # Assuming the robot moves forward after passing the marker
+
+# Initialize state variables
+searching_for_marker = True
+first_marker_passed = False
+
 try:
     while True:
         frames = pipeline.wait_for_frames()
@@ -129,17 +137,7 @@ try:
 
                 print(f"Detected Marker ID: {id_num}, Camera X: {camera_x:.2f}m, Camera Z: {camera_z:.2f}m")
 
-                # Determine robot movement based on camera position relative to marker
-                frame_center_x = frame.shape[1] // 2
-                cx = corners[i][0][:, 0].mean()
-
-                # Pan to keep centered
-                if cx < frame_center_x - 30:
-                    robot.pan_left()
-                elif cx > frame_center_x + 30:
-                    robot.pan_right()
-
-                # Navigation logic based on camera position relative to marker
+                # Check if the marker is to the left or right
                 if id_num % 2 == 0:
                     if x < 0:  # Marker to the left
                         print("Marker on the Left")
@@ -157,9 +155,24 @@ try:
                     else:
                         robot.move_forward()
 
-                visited_ids.add(id_num)
+                # Stop looking for the first marker once passed
+                if not first_marker_passed and passed_marker(camera_x):
+                    print("First marker passed, now searching for the next marker")
+                    first_marker_passed = True
 
-                # Stop condition
+                # If the first marker is passed, start searching for the next one
+                if first_marker_passed:
+                    # Pan head to search for the next marker
+                    if searching_for_marker:
+                        if camera_x < 0:  # Left of the camera
+                            robot.pan_left()
+                        elif camera_x > 0:  # Right of the camera
+                            robot.pan_right()
+                    else:
+                        # We found the next marker, stop searching
+                        searching_for_marker = False
+
+                visited_ids.add(id_num)
 
         cv.imshow("ArUco Navigation", frame)
         if cv.waitKey(1) & 0xFF == ord('q'):
