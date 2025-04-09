@@ -123,10 +123,6 @@ try:
             for i in range(len(ids)):
                 id_num = int(ids[i][0])
 
-                last_seen = marker_last_seen_time.get(id_num, 0)
-                if current_time - last_seen < MARKER_COOLDOWN_SECONDS:
-                    continue
-
                 # Estimate pose of the marker
                 rvec, tvec, _ = cv.aruco.estimatePoseSingleMarkers(corners[i], 0.055, camera_matrix, dist_coeffs)
                 cv.drawFrameAxes(frame, camera_matrix, dist_coeffs, rvec, tvec, 0.03)
@@ -145,9 +141,9 @@ try:
                 cx = corners[i][0][:, 0].mean()
 
                 # Pan to keep centered
-                if cx < frame_center_x - 15:
+                if cx < frame_center_x - 5:
                     robot.pan_right()
-                elif cx > frame_center_x + 15:
+                elif cx > frame_center_x + 5:
                     robot.pan_left()
 
                 # Navigation logic based on camera position
