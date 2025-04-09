@@ -101,6 +101,10 @@ def get_camera_position_from_marker(marker_world_pos, rvec, tvec):
 robot = RobotControl()
 visited_ids = set()
 
+
+marker_last_seen_time = {}
+MARKER_COOLDOWN_SECONDS = 5
+
 try:
     while True:
         frames = pipeline.wait_for_frames()
@@ -112,11 +116,15 @@ try:
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
         corners, ids, _ = detector.detectMarkers(gray)
+        current_time = time.time()
+
         if ids is not None:
             cv.aruco.drawDetectedMarkers(frame, corners, ids)
             for i in range(len(ids)):
                 id_num = int(ids[i][0])
-                if id_num in visited_ids:
+
+                last_seen = marker_last_seen_time.get(id_num, 0)
+                if current_time - last_seen < MARKER_COOLDOWN_SECONDS:
                     continue
 
                 # Estimate pose of the marker
@@ -157,13 +165,7 @@ try:
                     print("Going Forward")
                     #robot.move_forward()
 
-                visited_ids.add(id_num)
-
-                # Stop condition
-                if len(visited_ids) >= 4:
-                    print("Finished")
-                    robot.stop()
-                    raise KeyboardInterrupt
+                marker_last_seen_time[id_num] = current_time            
 
         cv.imshow("ArUco Navigation", frame)
         if cv.waitKey(1) & 0xFF == ord('q'):
