@@ -52,18 +52,18 @@ class RobotControl:
         self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6100)
         time.sleep(.1)
 
-    def turn_left(self):
+    def turn_left(self, duration):
         print("left")
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 7000)
-        time.sleep(.65)
+        time.sleep(duration)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
 
-    def turn_right(self):
+    def turn_right(self, duration):
         print("right")
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
-        time.sleep(.65)
+        time.sleep(duration)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
 
     def move_forward(self):
@@ -144,35 +144,35 @@ try:
                 # Navigation logic based on camera position
                 if id_num % 2 != 0:  # Assuming robot is left of the marker
                     print("Turning left")
-                    robot.turn_left()
+                    robot.turn_left(.7)
                     time.sleep(1)
                     robot.move_forward()
                     time.sleep(1)
-                    robot.turn_right()
+                    robot.turn_right(0.65)
                     time.sleep(1)
                     robot.move_forward()
                     time.sleep(1)
-                    robot.turn_right()
+                    robot.turn_right(0.65)
                     time.sleep(1)
                     robot.move_forward()
                     time.sleep(1)
-                    robot.turn_left()
+                    robot.turn_left(0.7)
 
                 elif id_num % 2 == 0:  # Assuming robot is right of the marker
                     print("Turning right")
-                    robot.turn_right()
+                    robot.turn_right(.7)
                     time.sleep(1)
                     robot.move_forward()
                     time.sleep(1)
-                    robot.turn_left()
+                    robot.turn_left(.7)
                     time.sleep(1)
                     robot.move_forward()
                     time.sleep(1)
-                    robot.turn_left()
+                    robot.turn_left(.7)
                     time.sleep(1)
                     robot.move_forward()
                     time.sleep(1)
-                    robot.turn_right()
+                    robot.turn_right(.7)
 
                 else:  # Robot is centered in front of marker
                     print("Going Forward")
