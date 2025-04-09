@@ -103,7 +103,7 @@ visited_ids = set()
 
 
 marker_last_seen_time = {}
-MARKER_COOLDOWN_SECONDS = 5
+MARKER_COOLDOWN_SECONDS = 2
 
 try:
     while True:
