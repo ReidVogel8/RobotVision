@@ -63,7 +63,7 @@ class RobotControl:
         print("right")
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
-        time.sleep(.8)
+        time.sleep(.65)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
 
     def move_forward(self):
@@ -155,17 +155,17 @@ try:
                 elif id_num % 2 != 0:  # Assuming robot is right of the marker
                     print("Turning right")
                     robot.turn_right()
-                    time.sleep(.75)
+                    time.sleep(1)
                     robot.move_forward()
-                    time.sleep(.75)
+                    time.sleep(1)
                     robot.turn_left()
-                    time.sleep(.75)
+                    time.sleep(1)
                     robot.move_forward()
-                    time.sleep(.75)
+                    time.sleep(1)
                     robot.turn_left()
-                    time.sleep(.75)
+                    time.sleep(1)
                     robot.move_forward()
-                    time.sleep(.75)
+                    time.sleep(1)
                     robot.turn_right()
 
                 else:  # Robot is centered in front of marker
