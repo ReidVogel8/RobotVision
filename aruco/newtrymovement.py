@@ -145,18 +145,18 @@ try:
                 cx = corners[i][0][:, 0].mean()
 
                 # Pan to keep centered
-                if cx < frame_center_x - 40:
+                if cx < frame_center_x - 75:
                     robot.pan_right()
-                if cx > frame_center_x + 40:
+                if cx > frame_center_x + 75:
                     robot.pan_left()
 
                 # Navigation logic based on camera position
-                if camera_x < 0:  # Assuming robot is left of the marker
+                if id_num % 2 == 0:  # Assuming robot is left of the marker
                     print("Turning Right")
                     robot.turn_left()
                     robot.move_forward()
                     robot.turn_right()
-                elif camera_x > 0:  # Assuming robot is right of the marker
+                elif id_num % 2 != 0:  # Assuming robot is right of the marker
                     print("Turning Left")
                     robot.turn_right()
                     robot.move_forward()
