@@ -56,20 +56,20 @@ class RobotControl:
         print("left")
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 7000)
-        time.sleep(.3)
+        time.sleep(.8)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
 
     def turn_right(self):
         print("right")
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
-        time.sleep(.3)
+        time.sleep(.8)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
 
     def move_forward(self):
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
         self.m.setTarget(0, 5000)
-        time.sleep(.5)
+        time.sleep(.8)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
 
 # Function to calculate camera position relative to the marker
@@ -143,7 +143,7 @@ try:
 
                 # Navigation logic based on camera position
                 if id_num % 2 == 0:  # Assuming robot is left of the marker
-                    print("Turning Right")
+                    print("Turning left")
                     robot.turn_left()
                     robot.move_forward()
                     robot.turn_right()
@@ -153,7 +153,7 @@ try:
                     robot.turn_left()
 
                 elif id_num % 2 != 0:  # Assuming robot is right of the marker
-                    print("Turning Left")
+                    print("Turning right")
                     robot.turn_right()
                     robot.move_forward()
                     robot.turn_left()
@@ -161,7 +161,7 @@ try:
                     robot.turn_left()
                     robot.move_forward()
                     robot.turn_right()
-                    
+
                 else:  # Robot is centered in front of marker
                     print("Going Forward")
                     robot.move_forward()
