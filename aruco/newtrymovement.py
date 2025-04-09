@@ -145,7 +145,7 @@ try:
                 cx = corners[i][0][:, 0].mean()
 
                 # Pan to keep centered
-                while frame_center_x - 75 < cx < frame_center_x + 75:
+                while frame_center_x - 75 < cx and cx > frame_center_x + 75:
                     if cx < frame_center_x - 75:
                         robot.pan_right()
                     if cx > frame_center_x + 75:
