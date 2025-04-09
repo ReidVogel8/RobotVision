@@ -148,10 +148,10 @@ try:
                 while frame_center_x - 75 > cx and cx < frame_center_x + 75:
                     if cx < frame_center_x - 75:
                         robot.pan_right()
-                        time.sleep(1)
+                        break
                     if cx > frame_center_x + 75:
                         robot.pan_left()
-                        time.sleep(1)
+                        break
 
 
                 # Navigation logic based on camera position
