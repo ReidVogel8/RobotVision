@@ -155,11 +155,17 @@ try:
                 elif id_num % 2 != 0:  # Assuming robot is right of the marker
                     print("Turning right")
                     robot.turn_right()
+                    time.sleep(.75)
                     robot.move_forward()
+                    time.sleep(.75)
                     robot.turn_left()
+                    time.sleep(.75)
                     robot.move_forward()
+                    time.sleep(.75)
                     robot.turn_left()
+                    time.sleep(.75)
                     robot.move_forward()
+                    time.sleep(.75)
                     robot.turn_right()
 
                 else:  # Robot is centered in front of marker
