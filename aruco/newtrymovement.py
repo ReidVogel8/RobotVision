@@ -24,8 +24,8 @@ pipeline.start(config)
 
 # Robot setup
 MIDDLE = 6000
-HEAD_UP_DOWN_PORT = 4
-HEAD_LEFT_RIGHT_PORT = 2
+HEAD_UP_DOWN_PORT = 2
+HEAD_LEFT_RIGHT_PORT = 4
 LEFT_WHEEL_PORT = 0
 RIGHT_WHEEL_PORT = 1
 
@@ -46,13 +46,13 @@ class RobotControl:
         print("start")
 
     def pan_left(self):
-        self.m.setTarget(4, 6000)
-        self.m.setTarget(4, 5900)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 5900)
         time.sleep(.1)
 
     def pan_right(self):
-        self.m.setTarget(4, 6000)
-        self.m.setTarget(4, 6100)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6100)
         time.sleep(.1)
 
     def turn_left(self):
@@ -145,10 +145,10 @@ try:
                 cx = corners[i][0][:, 0].mean()
 
                 # Pan to keep centered
-                if cx < frame_center_x - 75:
-                    robot.pan_right()
-                if cx > frame_center_x + 75:
-                    robot.pan_left()
+                # if cx < frame_center_x - 75:
+                #     robot.pan_right()
+                # if cx > frame_center_x + 75:
+                #     robot.pan_left()
 
                 # Navigation logic based on camera position
                 if id_num % 2 == 0:  # Assuming robot is left of the marker
@@ -156,11 +156,15 @@ try:
                     robot.turn_left()
                     robot.move_forward()
                     robot.turn_right()
+                    robot.pan_left()
+
                 elif id_num % 2 != 0:  # Assuming robot is right of the marker
                     print("Turning Left")
                     robot.turn_right()
                     robot.move_forward()
                     robot.turn_left()
+                    robot.pan_right()
+
                 else:  # Robot is centered in front of marker
                     print("Going Forward")
                     robot.move_forward()
