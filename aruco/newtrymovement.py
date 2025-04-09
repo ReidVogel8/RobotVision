@@ -42,9 +42,6 @@ class RobotControl:
     def __init__(self):
         self.m = Controller()
 
-    def start(self):
-        print("start")
-
     def pan_left(self):
         self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
         self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 5900)
@@ -73,12 +70,6 @@ class RobotControl:
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
         self.m.setTarget(0, 5000)
         time.sleep(.5)
-        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
-
-    def move_backward(self):
-        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
-        self.m.setTarget(0, 7000)
-        time.sleep(.6)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
 
 # Function to calculate camera position relative to the marker
@@ -156,15 +147,21 @@ try:
                     robot.turn_left()
                     robot.move_forward()
                     robot.turn_right()
-                    robot.pan_left()
+                    robot.move_forward()
+                    robot.turn_right()
+                    robot.move_forward()
+                    robot.turn_left()
 
                 elif id_num % 2 != 0:  # Assuming robot is right of the marker
                     print("Turning Left")
                     robot.turn_right()
                     robot.move_forward()
                     robot.turn_left()
-                    robot.pan_right()
-
+                    robot.move_forward()
+                    robot.turn_left()
+                    robot.move_forward()
+                    robot.turn_right()
+                    
                 else:  # Robot is centered in front of marker
                     print("Going Forward")
                     robot.move_forward()
