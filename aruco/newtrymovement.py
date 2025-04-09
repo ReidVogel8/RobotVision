@@ -48,12 +48,12 @@ class RobotControl:
     def pan_left(self):
         self.m.setTarget(4, 6000)
         self.m.setTarget(4, 5700)
-        time.sleep(.2)
+        time.sleep(.1)
 
     def pan_right(self):
         self.m.setTarget(4, 6000)
         self.m.setTarget(4, 6300)
-        time.sleep(.2)
+        time.sleep(.1)
 
     def turn_left(self):
         print("left")
@@ -141,9 +141,9 @@ try:
                 cx = corners[i][0][:, 0].mean()
 
                 # Pan to keep centered
-                if cx < frame_center_x - 5:
+                if cx < frame_center_x - 30:
                     robot.pan_right()
-                elif cx > frame_center_x + 5:
+                elif cx > frame_center_x + 30:
                     robot.pan_left()
 
                 # Navigation logic based on camera position
