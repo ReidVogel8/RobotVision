@@ -147,7 +147,7 @@ try:
                 # Pan to keep centered
                 if cx < frame_center_x - 75:
                     robot.pan_right()
-                elif cx > frame_center_x + 75:
+                if cx > frame_center_x + 75:
                     robot.pan_left()
 
                 # Navigation logic based on camera position
