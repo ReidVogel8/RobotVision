@@ -145,19 +145,19 @@ try:
                 cx = corners[i][0][:, 0].mean()
 
                 # Pan to keep centered
-                if cx < frame_center_x - 30:
+                if cx < frame_center_x + 30:
                     robot.pan_left()
-                elif cx > frame_center_x + 30:
+                elif cx > frame_center_x - 30:
                     robot.pan_right()
 
                 # Navigation logic based on camera position
                 if camera_x < 0:  # Assuming robot is left of the marker
-                    print("Turning Left")
+                    print("Turning Right")
                     # robot.turn_left()
                     # robot.move_forward()
                     # robot.turn_right()
                 elif camera_x > 0:  # Assuming robot is right of the marker
-                    print("Turning Right")
+                    print("Turning Left")
                     # robot.turn_right()
                     # robot.move_forward()
                     # robot.turn_left()
@@ -165,7 +165,7 @@ try:
                     print("Going Forward")
                     #robot.move_forward()
 
-                marker_last_seen_time[id_num] = current_time            
+                marker_last_seen_time[id_num] = current_time
 
         cv.imshow("ArUco Navigation", frame)
         if cv.waitKey(1) & 0xFF == ord('q'):
