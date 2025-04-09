@@ -29,6 +29,7 @@ HEAD_LEFT_RIGHT_PORT = 2
 LEFT_WHEEL_PORT = 0
 RIGHT_WHEEL_PORT = 1
 
+
 class RobotControl:
     _instance = None
 
@@ -48,28 +49,26 @@ class RobotControl:
         self.m.setTarget(4, 6000)
         self.m.setTarget(4, 5000)
         time.sleep(.2)
-        self.m.setTarget(4, 6000)
-        
+
     def pan_right(self):
         self.m.setTarget(4, 6000)
         self.m.setTarget(4, 7000)
         time.sleep(.2)
-        self.m.setTarget(4, 6000)
-        
+
     def turn_left(self):
         print("left")
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 7000)
         time.sleep(.3)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
-        
+
     def turn_right(self):
         print("right")
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
         time.sleep(.3)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
-        
+
     def move_forward(self):
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
         self.m.setTarget(0, 5000)
@@ -81,6 +80,7 @@ class RobotControl:
         self.m.setTarget(0, 7000)
         time.sleep(.6)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
+
 
 # Function to calculate camera position relative to the marker
 def get_camera_position_from_marker(marker_world_pos, rvec, tvec):
@@ -98,12 +98,15 @@ def get_camera_position_from_marker(marker_world_pos, rvec, tvec):
     camera_world = marker_world + t_tc[0:3]
     return float(camera_world[0]), float(camera_world[1])
 
+
 robot = RobotControl()
 visited_ids = set()
+
 
 # Function to check if the robot has passed the marker based on the camera's position
 def passed_marker(camera_x):
     return camera_x > 0  # Assuming the robot moves forward after passing the marker
+
 
 # Initialize state variables
 searching_for_marker = True
