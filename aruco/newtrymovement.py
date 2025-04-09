@@ -48,12 +48,12 @@ class RobotControl:
     def pan_left(self):
         self.m.setTarget(4, 6000)
         self.m.setTarget(4, 5700)
-        time.sleep(.05)
+        time.sleep(.1)
 
     def pan_right(self):
         self.m.setTarget(4, 6000)
         self.m.setTarget(4, 6300)
-        time.sleep(.05)
+        time.sleep(.1)
 
     def turn_left(self):
         print("left")
@@ -103,7 +103,7 @@ visited_ids = set()
 
 
 marker_last_seen_time = {}
-MARKER_COOLDOWN_SECONDS = 0.5
+MARKER_COOLDOWN_SECONDS = 1
 
 try:
     while True:
@@ -126,7 +126,7 @@ try:
                 last_seen = marker_last_seen_time.get(id_num, 0)
                 if current_time - last_seen < MARKER_COOLDOWN_SECONDS:
                     continue
-                
+
                 # Estimate pose of the marker
                 rvec, tvec, _ = cv.aruco.estimatePoseSingleMarkers(corners[i], 0.055, camera_matrix, dist_coeffs)
                 cv.drawFrameAxes(frame, camera_matrix, dist_coeffs, rvec, tvec, 0.03)
@@ -145,9 +145,9 @@ try:
                 cx = corners[i][0][:, 0].mean()
 
                 # Pan to keep centered
-                if cx < frame_center_x - 10:
+                if cx < frame_center_x - 100:
                     robot.pan_right()
-                elif cx > frame_center_x + 10:
+                elif cx > frame_center_x + 100:
                     robot.pan_left()
 
                 # Navigation logic based on camera position
