@@ -145,11 +145,17 @@ try:
                 if id_num % 2 == 0:  # Assuming robot is left of the marker
                     print("Turning left")
                     robot.turn_left()
+                    time.sleep(1)
                     robot.move_forward()
+                    time.sleep(1)
                     robot.turn_right()
+                    time.sleep(1)
                     robot.move_forward()
+                    time.sleep(1)
                     robot.turn_right()
+                    time.sleep(1)
                     robot.move_forward()
+                    time.sleep(1)
                     robot.turn_left()
 
                 elif id_num % 2 != 0:  # Assuming robot is right of the marker
