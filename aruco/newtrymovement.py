@@ -153,17 +153,17 @@ try:
                 # Navigation logic based on camera position
                 if camera_x < 0:  # Assuming robot is left of the marker
                     print("Turning Right")
-                    # robot.turn_left()
-                    # robot.move_forward()
-                    # robot.turn_right()
+                    robot.turn_left()
+                    robot.move_forward()
+                    robot.turn_right()
                 elif camera_x > 0:  # Assuming robot is right of the marker
                     print("Turning Left")
-                    # robot.turn_right()
-                    # robot.move_forward()
-                    # robot.turn_left()
+                    robot.turn_right()
+                    robot.move_forward()
+                    robot.turn_left()
                 else:  # Robot is centered in front of marker
                     print("Going Forward")
-                    #robot.move_forward()
+                    robot.move_forward()
 
                 marker_last_seen_time[id_num] = current_time
 
