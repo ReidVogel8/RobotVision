@@ -47,12 +47,12 @@ class RobotControl:
 
     def pan_left(self):
         self.m.setTarget(4, 6000)
-        self.m.setTarget(4, 5700)
+        self.m.setTarget(4, 5900)
         time.sleep(.1)
 
     def pan_right(self):
         self.m.setTarget(4, 6000)
-        self.m.setTarget(4, 6300)
+        self.m.setTarget(4, 6100)
         time.sleep(.1)
 
     def turn_left(self):
