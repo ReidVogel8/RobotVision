@@ -44,15 +44,15 @@ class RobotControl:
 
     def pan_left(self):
         self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
-        time.sleep(0.5)
-        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 5900)
-        time.sleep(.3)
+        time.sleep(0.3)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 5000)
+        #time.sleep(.3)
 
     def pan_right(self):
         self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
-        time.sleep(0.5)
-        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6100)
-        time.sleep(.3)
+        time.sleep(0.3)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 7000)
+        #time.sleep(.3)
 
     def turn_left(self, duration):
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
@@ -71,7 +71,7 @@ class RobotControl:
     def move_forward(self):
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
         self.m.setTarget(LEFT_WHEEL_PORT, 5000)
-        time.sleep(1.7)
+        time.sleep(1.3)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
 
 # Function to calculate camera position relative to the marker
