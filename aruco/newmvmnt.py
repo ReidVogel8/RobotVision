@@ -54,23 +54,32 @@ class RobotControl:
 
     def turn_left(self, duration):
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
+        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
         time.sleep(0.5)
         self.m.setTarget(RIGHT_WHEEL_PORT, 7000)
+        self.m.setTarget(LEFT_WHEEL_PORT, 5000)
         time.sleep(duration)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
+        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
 
     def turn_right(self, duration):
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
+        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
         time.sleep(0.5)
         self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
+        self.m.setTarget(LEFT_WHEEL_PORT, 7000)
         time.sleep(duration)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
+        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
 
     def move_forward(self):
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
+        self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
+        self.m.setTarget(LEFT_WHEEL_PORT, 5000)
         self.m.setTarget(LEFT_WHEEL_PORT, 5000)
         time.sleep(1.3)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
+        self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
 
 
 # Function to calculate camera position relative to the marker
@@ -183,4 +192,3 @@ except KeyboardInterrupt:
 finally:
     pipeline.stop()
     cv.destroyAllWindows()
-
