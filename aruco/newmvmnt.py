@@ -67,13 +67,9 @@ class RobotControl:
 
     def move_forward(self):
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
-        self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         self.m.setTarget(LEFT_WHEEL_PORT, 5000)
-        self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
         time.sleep(1.3)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
-        self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
-
 
     def slight_left(self):
         self.m.setTarget(RIGHT_WHEEL_PORT, 6200)
@@ -179,8 +175,8 @@ try:
                 print(f"Detected Marker ID: {id_num}, Distance Z: {z:.2f}m")
 
                 camera_x, camera_z = get_camera_position_from_marker((x, z), rvec[0], tvec[0])
-                position_x = camera_x
-                position_z = camera_z
+                position_x = camera_x * 3.281
+                position_z = camera_z * 3.281
                 print(f"Robot Coordinates: ({position_x:.2f} ft, {position_z:.2f} ft)")
 
                 adjust_course_based_on_marker(corners[i][0], frame.shape[1])
@@ -208,3 +204,4 @@ except KeyboardInterrupt:
 finally:
     pipeline.stop()
     cv.destroyAllWindows()
+
