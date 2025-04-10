@@ -91,6 +91,7 @@ def get_camera_position_from_marker(marker_world_pos, rvec, tvec):
 
 robot = RobotControl()
 visited_ids = set()
+count = 0
 
 
 marker_last_seen_time = {}
@@ -144,6 +145,7 @@ try:
                 # Navigation logic based on camera position
                 if id_num % 2 != 0:  # Assuming robot is left of the marker
                     print("Turning left")
+                    count++
                     robot.turn_left(.84)
                     time.sleep(1)
                     robot.move_forward()
@@ -165,6 +167,7 @@ try:
 
                 elif id_num % 2 == 0:  # Assuming robot is right of the marker
                     print("Turning right")
+                    count++
                     robot.turn_right(.65)
                     time.sleep(1)
                     robot.move_forward()
@@ -189,6 +192,10 @@ try:
                     robot.move_forward()
 
                 marker_last_seen_time[id_num] = current_time
+
+                if(count >= 4):
+                    print("Finished")
+                    break
 
         cv.imshow("ArUco Navigation", frame)
         if cv.waitKey(1) & 0xFF == ord('q'):
