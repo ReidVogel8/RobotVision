@@ -50,13 +50,13 @@ class RobotControl:
     def pan_left(self):
         #self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
         #time.sleep(0.3)
-        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 8000)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 7000)
         #time.sleep(.3)
 
     def pan_right(self):
         #self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
         #time.sleep(0.3)
-        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 4000)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 5000)
         #time.sleep(.3)
 
     def turn_left(self, duration):
@@ -197,10 +197,10 @@ try:
                     robot.move_forward()
 
                 marker_last_seen_time[id_num] = current_time
-
+                robot.head_center()
+                
                 if(count >= 4):
                     print("Finished")
-                    robot.head_center()
                     break
 
         cv.imshow("ArUco Navigation", frame)
