@@ -150,6 +150,8 @@ try:
                     time.sleep(1)
                     robot.turn_right(0.65)
                     time.sleep(1)
+                    robot.pan_right()
+                    time.sleep(1)
                     robot.move_forward()
                     time.sleep(1)
                     robot.turn_right(0.65)
@@ -157,6 +159,9 @@ try:
                     robot.move_forward()
                     time.sleep(1)
                     robot.turn_left(0.84)
+                    time.sleep(1)
+                    robot.pan_left()
+                    time.sleep(1)
 
                 elif id_num % 2 == 0:  # Assuming robot is right of the marker
                     print("Turning right")
@@ -166,6 +171,8 @@ try:
                     time.sleep(1)
                     robot.turn_left(.84)
                     time.sleep(1)
+                    robot.pan_left()
+                    time.sleep(1)
                     robot.move_forward()
                     time.sleep(1)
                     robot.turn_left(.84)
@@ -173,6 +180,9 @@ try:
                     robot.move_forward()
                     time.sleep(1)
                     robot.turn_right(.65)
+                    time.sleep(1)
+                    robot.pan_right()
+                    time.sleep(1)
 
                 else:  # Robot is centered in front of marker
                     print("Going Forward")
