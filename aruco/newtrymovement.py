@@ -44,17 +44,19 @@ class RobotControl:
 
     def head_center(self):
         self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
+        self.m.setTarget(HEAD_UP_DOWN_PORT, 6000)
+    
 
     def pan_left(self):
         #self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
         #time.sleep(0.3)
-        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 4000)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 8000)
         #time.sleep(.3)
 
     def pan_right(self):
         #self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
         #time.sleep(0.3)
-        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 8000)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 4000)
         #time.sleep(.3)
 
     def turn_left(self, duration):
@@ -147,7 +149,6 @@ try:
                 # if cx > frame_center_x + 75:
                 #     robot.pan_left()
 
-                robot.head_center()
                 # Navigation logic based on camera position
                 if id_num % 2 != 0:  # Assuming robot is left of the marker
                     print("Turning left")
@@ -199,6 +200,7 @@ try:
 
                 if(count >= 4):
                     print("Finished")
+                    robot.head_center()
                     break
 
         cv.imshow("ArUco Navigation", frame)
