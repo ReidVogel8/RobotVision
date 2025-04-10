@@ -25,6 +25,7 @@ class RobotControl:
         time.sleep(.1)
         
     def body_reset(self):
+        self.m.setTarget(2, 6000)
         self.m.setTarget(3, 6000)
         self.m.setTarget(4, 6000)
         self.m.setTarget(5, 6000)
@@ -34,6 +35,13 @@ class RobotControl:
         self.m.setTarget(9, 6000)
         self.m.setTarget(10, 6000)
         self.m.setTarget(11, 6000)
+        self.m.setTarget(12, 6000)
+        self.m.setTarget(13, 6000)
+        self.m.setTarget(14, 6000)
+        self.m.setTarget(15, 6000)
+        self.m.setTarget(16, 6000)
+
+
 
 
     def pan_right(self):
