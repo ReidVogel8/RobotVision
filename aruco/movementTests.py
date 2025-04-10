@@ -78,7 +78,7 @@ def main():
     time.sleep(1)
     robot.move_forward()
     time.sleep(1)
-    robot.turn_right(0.73)
+    robot.turn_right(0.7)
     time.sleep(1)
     robot.move_forward()
     time.sleep(1)
