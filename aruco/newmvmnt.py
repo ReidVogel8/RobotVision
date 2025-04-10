@@ -172,7 +172,8 @@ try:
                 cv.drawFrameAxes(frame, camera_matrix, dist_coeffs, rvec, tvec, 0.03)
 
                 x, z = tvec[0][0][0], tvec[0][0][2]
-                print(f"Detected Marker ID: {id_num}, Distance Z: {z:.2f}m")
+                z_ft = z * 3.281
+                print(f"Detected Marker ID: {id_num}, Distance Z: {z_ft:.2f} ft")
 
                 camera_x, camera_z = get_camera_position_from_marker((x, z), rvec[0], tvec[0])
                 position_x = camera_x * 3.281
@@ -181,7 +182,7 @@ try:
 
                 adjust_course_based_on_marker(corners[i][0], frame.shape[1])
 
-                if z > 0.4:
+                if z_ft > 1.31:
                     print("Marker is far, moving forward...")
                     robot.move_forward()
                 else:
