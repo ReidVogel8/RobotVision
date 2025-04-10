@@ -85,7 +85,6 @@ class RobotControl:
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
 
-
 # Function to calculate camera position relative to the marker
 def get_camera_position_from_marker(marker_world_pos, rvec, tvec):
     R_ct, _ = cv.Rodrigues(rvec)
@@ -100,7 +99,6 @@ def get_camera_position_from_marker(marker_world_pos, rvec, tvec):
     camera_world = marker_world + t_tc[0:3]
     return float(camera_world[0]), float(camera_world[1])
 
-
 def adjust_course_based_on_marker(corners, frame_width):
     cx = corners[:, 0].mean()
     deviation = cx - frame_width / 2
@@ -108,55 +106,46 @@ def adjust_course_based_on_marker(corners, frame_width):
     if deviation > tolerance:
         print("Adjusting course slightly left")
         robot.slight_left()
+        robot.pan_right()
     elif deviation < -tolerance:
         print("Adjusting course slightly right")
         robot.slight_right()
+        robot.pan_left()
     else:
         print("Course centered")
-
+        robot.head_center()
 
 def navigate_around_marker(id_num):
     if id_num % 2 != 0:
         print("Navigating around left side (odd ID)")
         robot.turn_left(0.8)
-        time.sleep(0.5)
         robot.pan_right()
         robot.move_forward()
-        time.sleep(0.5)
         robot.turn_right(0.71)
-        time.sleep(0.5)
         robot.move_forward()
-        time.sleep(0.5)
         robot.turn_right(0.72)
-        time.sleep(0.5)
         robot.move_forward()
-        time.sleep(0.5)
         robot.turn_left(0.77)
         robot.pan_left()
     else:
         print("Navigating around right side (even ID)")
         robot.turn_right(0.8)
-        time.sleep(0.5)
         robot.pan_left()
         robot.move_forward()
-        time.sleep(0.5)
         robot.turn_left(0.89)
-        time.sleep(0.5)
         robot.move_forward()
-        time.sleep(0.5)
         robot.turn_left(0.86)
-        time.sleep(0.5)
         robot.move_forward()
-        time.sleep(0.5)
         robot.turn_right(0.77)
         robot.pan_right()
-
 
 robot = RobotControl()
 visited_ids = set()
 count = 0
 marker_last_seen_time = {}
 MARKER_COOLDOWN_SECONDS = 1
+position_x = 0.0
+position_z = 0.0
 
 try:
     while True:
@@ -185,6 +174,11 @@ try:
                 x, z = tvec[0][0][0], tvec[0][0][2]
                 print(f"Detected Marker ID: {id_num}, Distance Z: {z:.2f}m")
 
+                camera_x, camera_z = get_camera_position_from_marker((x, z), rvec[0], tvec[0])
+                position_x = camera_x
+                position_z = camera_z
+                print(f"Robot Coordinates: ({position_x:.2f} ft, {position_z:.2f} ft)")
+
                 adjust_course_based_on_marker(corners[i][0], frame.shape[1])
 
                 if z > 0.4:
@@ -210,4 +204,3 @@ except KeyboardInterrupt:
 finally:
     pipeline.stop()
     cv.destroyAllWindows()
-
