@@ -42,16 +42,19 @@ class RobotControl:
     def __init__(self):
         self.m = Controller()
 
-    def pan_left(self):
+    def head_center(self):
         self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
-        time.sleep(0.3)
-        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 5000)
+
+    def pan_left(self):
+        #self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
+        #time.sleep(0.3)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 4000)
         #time.sleep(.3)
 
     def pan_right(self):
-        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
-        time.sleep(0.3)
-        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 7000)
+        #self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
+        #time.sleep(0.3)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 8000)
         #time.sleep(.3)
 
     def turn_left(self, duration):
@@ -144,6 +147,7 @@ try:
                 # if cx > frame_center_x + 75:
                 #     robot.pan_left()
 
+                robot.head_center()
                 # Navigation logic based on camera position
                 if id_num % 2 != 0:  # Assuming robot is left of the marker
                     print("Turning left")
