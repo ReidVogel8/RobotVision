@@ -67,9 +67,13 @@ class RobotControl:
 
     def move_forward(self):
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
+        self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         self.m.setTarget(LEFT_WHEEL_PORT, 5000)
+        self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
         time.sleep(1.3)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
+        self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
+
 
     def slight_left(self):
         self.m.setTarget(RIGHT_WHEEL_PORT, 6200)
