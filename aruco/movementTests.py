@@ -83,7 +83,7 @@ def main():
     time.sleep(1)
     robot.move_forward()
     time.sleep(1)
-    robot.turn_left(0.89)
+    robot.turn_left(0.86)
     time.sleep(1)
     robot.move_forward()
     time.sleep(1)
