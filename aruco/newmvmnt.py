@@ -29,7 +29,6 @@ HEAD_LEFT_RIGHT_PORT = 4
 LEFT_WHEEL_PORT = 0
 RIGHT_WHEEL_PORT = 1
 
-
 class RobotControl:
     _instance = None
 
@@ -54,32 +53,37 @@ class RobotControl:
 
     def turn_left(self, duration):
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
-        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
         time.sleep(0.5)
         self.m.setTarget(RIGHT_WHEEL_PORT, 7000)
-        self.m.setTarget(LEFT_WHEEL_PORT, 5000)
         time.sleep(duration)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
-        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
 
     def turn_right(self, duration):
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
-        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
         time.sleep(0.5)
         self.m.setTarget(RIGHT_WHEEL_PORT, 5000)
-        self.m.setTarget(LEFT_WHEEL_PORT, 7000)
         time.sleep(duration)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
-        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
 
     def move_forward(self):
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
-        self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
-        self.m.setTarget(LEFT_WHEEL_PORT, 5000)
         self.m.setTarget(LEFT_WHEEL_PORT, 5000)
         time.sleep(1.3)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
+
+    def slight_left(self):
+        self.m.setTarget(RIGHT_WHEEL_PORT, 6200)
+        self.m.setTarget(LEFT_WHEEL_PORT, 5800)
+        time.sleep(0.3)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
+        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
+
+    def slight_right(self):
+        self.m.setTarget(RIGHT_WHEEL_PORT, 5800)
+        self.m.setTarget(LEFT_WHEEL_PORT, 6200)
+        time.sleep(0.3)
+        self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
+        self.m.setTarget(LEFT_WHEEL_PORT, 6000)
 
 
 # Function to calculate camera position relative to the marker
@@ -97,8 +101,22 @@ def get_camera_position_from_marker(marker_world_pos, rvec, tvec):
     return float(camera_world[0]), float(camera_world[1])
 
 
+def adjust_course_based_on_marker(corners, frame_width):
+    cx = corners[:, 0].mean()
+    deviation = cx - frame_width / 2
+    tolerance = 30
+    if deviation > tolerance:
+        print("Adjusting course slightly left")
+        robot.slight_left()
+    elif deviation < -tolerance:
+        print("Adjusting course slightly right")
+        robot.slight_right()
+    else:
+        print("Course centered")
+
+
 def navigate_around_marker(id_num):
-    if id_num % 2 != 0:  # Odd ID -> go left around marker
+    if id_num % 2 != 0:
         print("Navigating around left side (odd ID)")
         robot.turn_left(0.8)
         time.sleep(0.5)
@@ -115,8 +133,7 @@ def navigate_around_marker(id_num):
         time.sleep(0.5)
         robot.turn_left(0.77)
         robot.pan_left()
-
-    else:  # Even ID -> go right around marker
+    else:
         print("Navigating around right side (even ID)")
         robot.turn_right(0.8)
         time.sleep(0.5)
@@ -158,7 +175,6 @@ try:
             cv.aruco.drawDetectedMarkers(frame, corners, ids)
             for i in range(len(ids)):
                 id_num = int(ids[i][0])
-
                 last_seen = marker_last_seen_time.get(id_num, 0)
                 if current_time - last_seen < MARKER_COOLDOWN_SECONDS:
                     continue
@@ -168,6 +184,8 @@ try:
 
                 x, z = tvec[0][0][0], tvec[0][0][2]
                 print(f"Detected Marker ID: {id_num}, Distance Z: {z:.2f}m")
+
+                adjust_course_based_on_marker(corners[i][0], frame.shape[1])
 
                 if z > 0.4:
                     print("Marker is far, moving forward...")
@@ -192,3 +210,4 @@ except KeyboardInterrupt:
 finally:
     pipeline.stop()
     cv.destroyAllWindows()
+
