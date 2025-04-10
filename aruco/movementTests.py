@@ -73,7 +73,7 @@ robot = RobotControl()
 
 
 def main():
-    robot.body_reset()
-    #robot.turn_right(.1)
+    #robot.body_reset()
+    robot.turn_right(.5)
     
 main()
