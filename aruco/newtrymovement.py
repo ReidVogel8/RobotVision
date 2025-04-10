@@ -69,7 +69,7 @@ class RobotControl:
     def move_forward(self):
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
         self.m.setTarget(0, 5000)
-        time.sleep(1.1)
+        time.sleep(1.7)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
 
 # Function to calculate camera position relative to the marker
