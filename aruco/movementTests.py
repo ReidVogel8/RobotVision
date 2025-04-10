@@ -31,6 +31,10 @@ class RobotControl:
         self.m.setTarget(6, 6000)
         self.m.setTarget(7, 6000)
         self.m.setTarget(8, 6000)
+        self.m.setTarget(9, 6000)
+        self.m.setTarget(10, 6000)
+        self.m.setTarget(11, 6000)
+
 
     def pan_right(self):
         self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
