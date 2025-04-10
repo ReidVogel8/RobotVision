@@ -7,6 +7,7 @@ HEAD_LEFT_RIGHT_PORT = 4
 LEFT_WHEEL_PORT = 0
 RIGHT_WHEEL_PORT = 1
 
+
 class RobotControl:
     _instance = None
 
@@ -23,7 +24,7 @@ class RobotControl:
         self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
         self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 5900)
         time.sleep(.1)
-        
+
     def body_reset(self):
         self.m.setTarget(2, 6000)
         self.m.setTarget(3, 6000)
@@ -40,9 +41,6 @@ class RobotControl:
         self.m.setTarget(14, 6000)
         self.m.setTarget(15, 6000)
         self.m.setTarget(16, 6000)
-
-
-
 
     def pan_right(self):
         self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
@@ -70,23 +68,25 @@ class RobotControl:
         time.sleep(1.5)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
 
+
 robot = RobotControl()
 
 
 def main():
-    #robot.body_reset()
-    robot.turn_right(0.8)
+    # robot.body_reset()
+    robot.turn_left(0.8)
     time.sleep(1)
     robot.move_forward()
-    time.sleep(1)
-    robot.turn_left(0.89)
-    time.sleep(1)
-    robot.move_forward()
-    time.sleep(1)
-    robot.turn_left(0.86)
-    time.sleep(1)
-    robot.move_forward()
-    time.sleep(1)
-    robot.turn_right(0.77)
-    
+    # time.sleep(1)
+    # robot.turn_right(0.89)
+    # time.sleep(1)
+    # robot.move_forward()
+    # time.sleep(1)
+    # robot.turn_right(0.86)
+    # time.sleep(1)
+    # robot.move_forward()
+    # time.sleep(1)
+    # robot.turn_left(0.77)
+
+
 main()
