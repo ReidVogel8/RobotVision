@@ -74,14 +74,14 @@ class RobotControl:
     def slight_left(self):
         self.m.setTarget(RIGHT_WHEEL_PORT, 6200)
         self.m.setTarget(LEFT_WHEEL_PORT, 5800)
-        time.sleep(0.3)
+        time.sleep(0.2)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
 
     def slight_right(self):
         self.m.setTarget(RIGHT_WHEEL_PORT, 5800)
         self.m.setTarget(LEFT_WHEEL_PORT, 6200)
-        time.sleep(0.3)
+        time.sleep(0.2)
         self.m.setTarget(RIGHT_WHEEL_PORT, 6000)
         self.m.setTarget(LEFT_WHEEL_PORT, 6000)
 
@@ -89,54 +89,48 @@ class RobotControl:
 def get_camera_position_from_marker(marker_world_pos, rvec, tvec):
     R_ct, _ = cv.Rodrigues(rvec)
     tvec = tvec.reshape((3, 1))
-
     R_tc = R_ct.T
     t_tc = -np.dot(R_tc, tvec)
 
     marker_x, marker_y = marker_world_pos
     marker_world = np.array([[marker_x], [marker_y], [0.0]])
-
     camera_world = marker_world + t_tc[0:3]
     return float(camera_world[0]), float(camera_world[1])
 
-def adjust_course_based_on_marker(corners, frame_width):
-    cx = corners[:, 0].mean()
-    deviation = cx - frame_width / 2
-    tolerance = 30
-    if deviation > tolerance:
-        print("Adjusting course slightly left")
-        robot.slight_left()
-        robot.pan_right()
-    elif deviation < -tolerance:
-        print("Adjusting course slightly right")
-        robot.slight_right()
-        robot.pan_left()
-    else:
-        print("Course centered")
-        robot.head_center()
+def adjust_alignment(x_coord):
+    tolerance = 0.02  # ~0.06 ft
+    while abs(x_coord) > tolerance:
+        if x_coord > 0:
+            print("Adjusting hard left to align")
+            robot.slight_left()
+        else:
+            print("Adjusting hard right to align")
+            robot.slight_right()
+        time.sleep(0.2)
+        break
 
 def navigate_around_marker(id_num):
     if id_num % 2 != 0:
         print("Navigating around left side (odd ID)")
-        robot.turn_left(0.8)
+        robot.turn_left(1.3)
         robot.pan_right()
         robot.move_forward()
-        robot.turn_right(0.71)
+        robot.turn_right(1.21)
         robot.move_forward()
-        robot.turn_right(0.72)
+        robot.turn_right(1.22)
         robot.move_forward()
-        robot.turn_left(0.77)
+        robot.turn_left(1.27)
         robot.pan_left()
     else:
         print("Navigating around right side (even ID)")
-        robot.turn_right(0.8)
+        robot.turn_right(1.3)
         robot.pan_left()
         robot.move_forward()
-        robot.turn_left(0.89)
+        robot.turn_left(1.39)
         robot.move_forward()
-        robot.turn_left(0.86)
+        robot.turn_left(1.36)
         robot.move_forward()
-        robot.turn_right(0.77)
+        robot.turn_right(1.27)
         robot.pan_right()
 
 robot = RobotControl()
@@ -173,6 +167,7 @@ try:
 
                 x, z = tvec[0][0][0], tvec[0][0][2]
                 z_ft = z * 3.281
+                x_ft = x * 3.281
                 print(f"Detected Marker ID: {id_num}, Distance Z: {z_ft:.2f} ft")
 
                 camera_x, camera_z = get_camera_position_from_marker((x, z), rvec[0], tvec[0])
@@ -180,13 +175,13 @@ try:
                 position_z = camera_z * 3.281
                 print(f"Robot Coordinates: ({position_x:.2f} ft, {position_z:.2f} ft)")
 
-                adjust_course_based_on_marker(corners[i][0], frame.shape[1])
+                adjust_alignment(x_ft)
 
-                if z_ft > 1.31:
-                    print("Marker is far, moving forward...")
+                if z_ft > 0.5:
+                    print("Approaching marker...")
                     robot.move_forward()
                 else:
-                    print("Marker is close enough, initiating navigation...")
+                    print("Close to marker, navigating...")
                     navigate_around_marker(id_num)
                     count += 1
                     marker_last_seen_time[id_num] = current_time
@@ -205,4 +200,3 @@ except KeyboardInterrupt:
 finally:
     pipeline.stop()
     cv.destroyAllWindows()
-
