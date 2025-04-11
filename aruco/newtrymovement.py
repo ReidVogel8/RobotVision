@@ -174,7 +174,7 @@ try:
                 elif id_num % 2 == 0:  # Assuming robot is right of the marker
                     print("Turning right")
                     count+=1
-                    robot.turn_right(0.8)
+                    robot.turn_right(0.79)
                     time.sleep(1)
                     robot.pan_left()
                     time.sleep(1)
