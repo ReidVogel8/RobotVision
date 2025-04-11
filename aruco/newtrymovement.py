@@ -50,7 +50,7 @@ class RobotControl:
     def pan_left(self):
         #self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
         #time.sleep(0.3)
-        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 7500)
+        self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 7700)
         #time.sleep(.3)
 
     def pan_right(self):
@@ -180,7 +180,7 @@ try:
                     time.sleep(1)
                     robot.move_forward()
                     time.sleep(1)
-                    robot.turn_left(0.93)
+                    robot.turn_left(0.92)
                     time.sleep(1)
                     robot.move_forward()
                     time.sleep(1)
