@@ -159,7 +159,7 @@ try:
                     time.sleep(1)
                     robot.move_forward()
                     time.sleep(1)
-                    robot.turn_right(0.65)
+                    robot.turn_right(0.62)
                     time.sleep(1)
                     robot.move_forward()
                     time.sleep(1)
