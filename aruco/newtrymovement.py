@@ -163,11 +163,11 @@ try:
                     time.sleep(1)
                     robot.move_forward()
                     time.sleep(1)
-                    robot.turn_right(0.7)
+                    robot.turn_right(0.71)
                     time.sleep(1)
                     robot.move_forward()
                     time.sleep(1)
-                    robot.turn_left(0.84)
+                    robot.turn_left(0.88)
                     time.sleep(1)
                     robot.pan_left()
 
