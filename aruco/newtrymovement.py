@@ -167,7 +167,7 @@ try:
                     time.sleep(1)
                     robot.move_forward()
                     time.sleep(1)
-                    robot.turn_left(0.8)
+                    robot.turn_left(0.84)
                     time.sleep(1)
                     robot.pan_left()
 
