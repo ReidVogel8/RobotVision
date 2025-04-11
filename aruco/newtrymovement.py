@@ -188,7 +188,7 @@ try:
                     time.sleep(1)
                     robot.move_forward()
                     time.sleep(1)
-                    robot.turn_right(0.73)
+                    robot.turn_right(0.74)
                     time.sleep(1)
                     robot.pan_right()
 
