@@ -203,7 +203,7 @@ try:
         if cv.waitKey(1) & 0xFF == ord('q'):
             break
 
-print("Finished")
+    print("Finished")
 
 except KeyboardInterrupt:
     print("Stopped by user")
