@@ -105,7 +105,7 @@ marker_last_seen_time = {}
 MARKER_COOLDOWN_SECONDS = 1
 
 try:
-    while True:
+    while count < 4:
         frames = pipeline.wait_for_frames()
         color_frame = frames.get_color_frame()
         if not color_frame:
@@ -198,14 +198,12 @@ try:
 
                 marker_last_seen_time[id_num] = current_time
                 robot.head_center()
-                
-                if(count >= 4):
-                    print("Finished")
-                    break
 
         cv.imshow("ArUco Navigation", frame)
         if cv.waitKey(1) & 0xFF == ord('q'):
             break
+
+print("Finished")
 
 except KeyboardInterrupt:
     print("Stopped by user")
