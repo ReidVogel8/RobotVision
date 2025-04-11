@@ -41,6 +41,12 @@ class RobotControl:
         self.m.setTarget(14, 6000)
         self.m.setTarget(15, 6000)
         self.m.setTarget(16, 6000)
+        self.m.setTarget(17, 6000)
+        self.m.setTarget(18, 6000)
+        self.m.setTarget(19, 6000)
+        self.m.setTarget(20, 6000)
+
+
 
     def pan_right(self):
         self.m.setTarget(HEAD_LEFT_RIGHT_PORT, 6000)
@@ -73,20 +79,6 @@ robot = RobotControl()
 
 
 def main():
-    # robot.body_reset()
-    robot.turn_left(0.8)
-    time.sleep(1)
-    robot.move_forward()
-    time.sleep(1)
-    robot.turn_right(0.71)
-    time.sleep(1)
-    robot.move_forward()
-    time.sleep(1)
-    robot.turn_right(0.72)
-    time.sleep(1)
-    robot.move_forward()
-    time.sleep(1)
-    robot.turn_left(0.77)
-
-
+    robot.body_reset()
+    
 main()
