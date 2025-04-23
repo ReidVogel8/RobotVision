@@ -71,7 +71,7 @@ class RobotControl:
 robot = RobotControl()
 
 def main():
-    robot.body_reset()
-    #robot.servo_test()
+    #robot.body_reset()
+    robot.servo_test()
     
 main()
