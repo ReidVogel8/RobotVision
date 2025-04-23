@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 import pyrealsense2 as rs
 import time
-from controller import Controller  # Your Maestro controller class
+from maestro import Controller  # Your Maestro controller class
 
 # Load Calibration
 with open("calibration.pkl", "rb") as f:
