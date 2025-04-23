@@ -26,9 +26,9 @@ class RobotControl:
     def body_reset(self):
         self.m.setTarget(2, 6600)
         time.sleep(0.5)
-        self.m.setTarget(3, 7000)
+        self.m.setTarget(3, 6000)
         time.sleep(0.5)
-        self.m.setTarget(4, 5000)
+        self.m.setTarget(4, 6000)
         time.sleep(0.5)
         self.m.setTarget(5, 6000)
         time.sleep(0.5)
@@ -71,7 +71,7 @@ class RobotControl:
 robot = RobotControl()
 
 def main():
-    robot.body_reset()
-    #robot.servo_test()
+    #robot.body_reset()
+    robot.servo_test()
     
 main()
