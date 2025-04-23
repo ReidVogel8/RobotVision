@@ -65,7 +65,7 @@ class RobotControl:
 
 
     def servo_test(self):
-        self.m.setTarget(TEST_PORT, 7500)
+        self.m.setTarget(TEST_PORT, 7700)
         time.sleep(1)
         self.m.setTarget(TEST_PORT, 5600)
 
