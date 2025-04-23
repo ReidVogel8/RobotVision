@@ -13,8 +13,9 @@ LEFT_SHOULDER_LEFT_RIGHT = 6
 LEFT_ELBOW = 7
 LEFT_WRIST = 8
 HAND_ROTATE = 9
+HAND_CLOSE = 10
 
-TEST_PORT = 10
+TEST_PORT = 11
 
 class RobotControl:
     _instance = None
