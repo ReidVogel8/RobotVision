@@ -2,12 +2,14 @@ from maestro import Controller
 import time
 
 MIDDLE = 6000
-HEAD_UP_DOWN_PORT = 3
-HEAD_LEFT_RIGHT_PORT = 4
+
 LEFT_WHEEL_PORT = 0
 RIGHT_WHEEL_PORT = 1
+WAIST_ROTATION = 2
+HEAD_UP_DOWN_PORT = 3
+HEAD_LEFT_RIGHT_PORT = 4
 
-TEST_PORT = 2
+TEST_PORT = 4
 
 class RobotControl:
     _instance = None
