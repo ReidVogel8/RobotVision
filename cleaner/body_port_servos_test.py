@@ -24,7 +24,7 @@ class RobotControl:
         self.m = Controller()
 
     def body_reset(self):
-        self.m.setTarget(2, 4500)
+        self.m.setTarget(2, 6000)
         time.sleep(0.5)
         self.m.setTarget(3, 6000)
         time.sleep(0.5)
