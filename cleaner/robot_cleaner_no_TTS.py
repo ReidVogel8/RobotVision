@@ -46,7 +46,7 @@ def raise_arm():
     time.sleep(1)
 
 def lower_arm():
-    robot.setTarget(LEFT_ELBOW, 5000)
+    robot.setTarget(LEFT_ELBOW, 5600)
     time.sleep(1)
 
 # Face Detector
