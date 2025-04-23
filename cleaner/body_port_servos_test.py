@@ -12,8 +12,9 @@ LEFT_SHOULDER_UP_DOWN = 5
 LEFT_SHOULDER_LEFT_RIGHT = 6
 LEFT_ELBOW = 7
 LEFT_WRIST = 8
-HAND_ROTATE = 9
-HAND_CLOSE = 10
+LEFT_HAND_ROTATE = 9
+LEFT_HAND_CLOSE = 10
+RIGHT_SHOULDER_UP_DOWN = 11
 
 TEST_PORT = 11
 
@@ -60,14 +61,7 @@ class RobotControl:
         time.sleep(0.5)
         self.m.setTarget(16, 6000)
         time.sleep(0.5)
-        self.m.setTarget(17, 6000)
-        time.sleep(0.5)
-        self.m.setTarget(18, 6000)
-        time.sleep(0.5)
-        self.m.setTarget(19, 6000)
-        time.sleep(0.5)
-        self.m.setTarget(20, 6000)
-        time.sleep(0.5)
+
 
     def servo_test(self):
         self.m.setTarget(TEST_PORT, 7500)
