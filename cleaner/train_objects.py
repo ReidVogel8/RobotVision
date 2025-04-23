@@ -3,15 +3,15 @@ import pickle
 import numpy as np
 import pyrealsense2 as rs
 
-# === ORB Feature Detector ===
+# ORB Feature Detector
 orb = cv2.ORB_create(nfeatures=1000)
 
-# === Data Structure to Hold Object Data ===
+# Data Structure to Hold Object Data
 trained_objects = []
 object_count = 0
 MAX_OBJECTS = 3
 
-# === Mouse Callback for Bounding Box ===
+# Mouse Callback for Bounding Box
 drawing = False
 ix, iy = -1, -1
 current_roi = None
@@ -31,7 +31,7 @@ def draw_rectangle(event, x, y, flags, param):
         drawing = False
         current_roi = (ix, iy, x, y)
 
-# === Start RealSense Camera ===
+# Start RealSense Camera
 pipeline = rs.pipeline()
 config = rs.config()
 config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
@@ -40,7 +40,7 @@ pipeline.start(config)
 cv2.namedWindow('Training Mode')
 cv2.setMouseCallback('Training Mode', draw_rectangle)
 
-print("🎥 Training Mode Active")
+print("Training Mode Active")
 print("Draw a box around each object and press 's' to save.")
 
 try:
@@ -69,14 +69,14 @@ try:
             roi = frame[min(y1, y2):max(y1, y2), min(x1, x2):max(x1, x2)]
 
             if roi.size == 0:
-                print("⚠️ Invalid ROI size. Try again.")
+                print("Invalid ROI size. Try again.")
                 continue
 
             gray_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
             keypoints, descriptors = orb.detectAndCompute(gray_roi, None)
 
             if descriptors is None or len(keypoints) < 5:
-                print("⚠️ Not enough keypoints. Try again.")
+                print("Not enough keypoints. Try again.")
                 continue
 
             name = input(f"Enter name for object {object_count + 1}: ")
@@ -88,19 +88,19 @@ try:
                 'descriptors': descriptors
             })
 
-            print(f"✅ Object '{name}' saved with ID {obj_id}")
+            print(f"Object '{name}' saved with ID {obj_id}")
             object_count += 1
             current_roi = None  # Reset ROI
 
         elif key == ord('q'):
-            print("❌ Quit without saving.")
+            print("Quit without saving.")
             break
 
 finally:
     pipeline.stop()
     cv2.destroyAllWindows()
 
-# === Save Descriptors to File ===
+# Save Descriptors to File
 if len(trained_objects) == MAX_OBJECTS:
     # Convert keypoints to savable form
     for obj in trained_objects:
@@ -110,6 +110,6 @@ if len(trained_objects) == MAX_OBJECTS:
     with open("trainedObjects.pkl", "wb") as f:
         pickle.dump(trained_objects, f)
 
-    print("💾 All objects saved to trainedObjects.pkl")
+    print("All objects saved to trainedObjects.pkl")
 else:
-    print("⚠️ Not enough objects trained. Please restart.")
+    print("Not enough objects trained. Please restart.")
