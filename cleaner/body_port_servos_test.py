@@ -52,7 +52,7 @@ class RobotControl:
         time.sleep(0.5)
         self.m.setTarget(11, 6000)
         time.sleep(0.5)
-        self.m.setTarget(12, 6000)
+        self.m.setTarget(12, 5600)
         time.sleep(0.5)
         self.m.setTarget(13, 6000)
         time.sleep(0.5)
@@ -67,7 +67,7 @@ class RobotControl:
     def servo_test(self):
         self.m.setTarget(TEST_PORT, 7500)
         time.sleep(1)
-        self.m.setTarget(TEST_PORT, 6000)
+        self.m.setTarget(TEST_PORT, 5600)
 
 robot = RobotControl()
 
