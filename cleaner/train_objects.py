@@ -1,6 +1,7 @@
 import cv2
 import pickle
 import numpy as np
+import pyrealsense2 as rs
 
 # === ORB Feature Detector ===
 orb = cv2.ORB_create(nfeatures=1000)
@@ -30,8 +31,11 @@ def draw_rectangle(event, x, y, flags, param):
         drawing = False
         current_roi = (ix, iy, x, y)
 
-# === Start Video Capture ===
-cap = cv2.VideoCapture(0)  # Use RealSense feed here if needed
+# === Start RealSense Camera ===
+pipeline = rs.pipeline()
+config = rs.config()
+config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+pipeline.start(config)
 
 cv2.namedWindow('Training Mode')
 cv2.setMouseCallback('Training Mode', draw_rectangle)
@@ -41,10 +45,12 @@ print("Draw a box around each object and press 's' to save.")
 
 try:
     while object_count < MAX_OBJECTS:
-        ret, frame = cap.read()
-        if not ret:
+        frames = pipeline.wait_for_frames()
+        color_frame = frames.get_color_frame()
+        if not color_frame:
             continue
 
+        frame = np.asanyarray(color_frame.get_data())
         display = frame.copy()
 
         # Draw the bounding box if in progress
@@ -91,12 +97,12 @@ try:
             break
 
 finally:
-    cap.release()
+    pipeline.stop()
     cv2.destroyAllWindows()
 
 # === Save Descriptors to File ===
 if len(trained_objects) == MAX_OBJECTS:
-    # Convert keypoints to savable form (you can't pickle cv2.KeyPoint directly)
+    # Convert keypoints to savable form
     for obj in trained_objects:
         obj['keypoints'] = [(kp.pt, kp.size, kp.angle, kp.response, kp.octave, kp.class_id)
                             for kp in obj['keypoints']]
