@@ -9,8 +9,9 @@ WAIST_ROTATION = 2 #lower than 6000 turns to its right
 HEAD_UP_DOWN_PORT = 3
 HEAD_LEFT_RIGHT_PORT = 4
 LEFT_SHOULDER_UP_DOWN = 5
+LEFT_SHOULDER_LEFT_RIGHT = 6
 
-TEST_PORT = 6
+TEST_PORT = 7
 
 class RobotControl:
     _instance = None
