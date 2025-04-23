@@ -18,8 +18,7 @@ with open("trainedObjects.pkl", "rb") as f:
 # Rebuild Keypoints
 for obj in trained_objects:
     obj['keypoints'] = [
-        cv2.KeyPoint(x=pt[0][0], y=pt[0][1], _size=pt[1], _angle=pt[2],
-                     _response=pt[3], _octave=pt[4], _class_id=pt[5])
+        cv2.KeyPoint(pt[0][0], pt[0][1], pt[1], pt[2], pt[3], int(pt[4]), int(pt[5]))
         for pt in obj['keypoints']
     ]
 
