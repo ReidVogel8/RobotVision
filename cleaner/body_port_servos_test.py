@@ -5,7 +5,7 @@ MIDDLE = 6000
 
 LEFT_WHEEL_PORT = 0
 RIGHT_WHEEL_PORT = 1
-WAIST_ROTATION = 2
+WAIST_ROTATION = 2 #lower than 6000 turns to its right
 HEAD_UP_DOWN_PORT = 3
 HEAD_LEFT_RIGHT_PORT = 4
 
@@ -24,7 +24,7 @@ class RobotControl:
         self.m = Controller()
 
     def body_reset(self):
-        self.m.setTarget(2, 4500)
+        self.m.setTarget(2, 7500)
         time.sleep(0.5)
         self.m.setTarget(3, 6000)
         time.sleep(0.5)
