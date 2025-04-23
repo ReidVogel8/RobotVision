@@ -39,14 +39,14 @@ pipeline.start(config)
 
 # Robot Setup
 robot = Controller()
-ARM_PORT = 3
+LEFT_ELBOW = 7
 
 def raise_arm():
-    robot.setTarget(ARM_PORT, 8000)
+    robot.setTarget(LEFT_ELBOW, 8000)
     time.sleep(1)
 
 def lower_arm():
-    robot.setTarget(ARM_PORT, 5000)
+    robot.setTarget(LEFT_ELBOW, 5000)
     time.sleep(1)
 
 # Face Detector
