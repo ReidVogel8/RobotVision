@@ -48,7 +48,7 @@ LEFT_SHOULDER = 5
 
 # Movement Functions
 def raise_arm():
-    robot.setTarget(LEFT_SHOULDER, 7500)
+    robot.setTarget(LEFT_SHOULDER, 5600)
     time.sleep(0.5)
     robot.setTarget(LEFT_ELBOW, 8700)
     time.sleep(1)
