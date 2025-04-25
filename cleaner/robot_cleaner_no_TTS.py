@@ -42,7 +42,8 @@ robot = Controller()
 LEFT_ELBOW = 7
 
 def raise_arm():
-    robot.setTarget(LEFT_ELBOW, 8000)
+    
+    robot.setTarget(LEFT_ELBOW, 8700)
     time.sleep(1)
 
 def lower_arm():
@@ -148,7 +149,7 @@ try:
 
         if not found:
             # ROTATE the robot left a little to scan
-            robot.rotate_left(0.25)
+            rotate_left(0.25)
             spin_attempts += 1
 
     if not found:
