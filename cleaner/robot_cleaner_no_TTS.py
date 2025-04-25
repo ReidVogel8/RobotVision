@@ -151,7 +151,7 @@ try:
 
         if not found:
             # ROTATE the robot left a little to scan
-            rotate_left(0.25)
+            rotate_left(0.5)
             spin_attempts += 1
 
     if not found:
