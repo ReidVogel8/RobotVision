@@ -44,20 +44,24 @@ LEFT_SHOULDER = 5
 
 def raise_arm():
     robot.setTarget(LEFT_SHOULDER, 7500)
+    time.sleep(0.5)
     robot.setTarget(LEFT_ELBOW, 8700)
     time.sleep(1)
 
 def lower_arm():
     robot.setTarget(LEFT_SHOULDER, 6000)
+    time.sleep(0.3)
     robot.setTarget(LEFT_ELBOW, 5600)
     time.sleep(1)
 
 def move_forward():
+    robot.setTarget(0, 6000)
     robot.setTarget(0, 8000)
     time.sleep(1)
     robot.setTarget(0, 6000)
     
 def rotate_left():
+    robot.setTarget(1, 6000)
     robot.setTarget(1, 6500)
     time.sleep(0.5)
     robot.setTarget(1, 6000)
