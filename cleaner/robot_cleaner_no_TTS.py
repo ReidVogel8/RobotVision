@@ -53,16 +53,11 @@ def move_forward():
     robot.setTarget(0, 8000)
     time.sleep(1)
     robot.setTarget(0, 6000)
-
-def rotate_right():
-    robot.setTarget(1, 6500)
-    time.sleep(1)
-    robot.setTarget(1, 6000)
-
-def rotate_right(self):
-    robot.setTarget(1, 6500)
-    time.sleep(2)
-    robot.setTarget(1, 6000)
+    
+def rotate_left(duration):
+    robot.setTarget(0, 6500)
+    time.sleep(duration)
+    robot.setTarget(0, 6000)
 
 # Face Detector
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
@@ -83,11 +78,11 @@ try:
         face_detected = any(w > 100 and h > 100 for (x, y, w, h) in faces)
 
         if face_detected:
-            print("What now?")
+            print("Ugh. What now?")
             break
 
     # Ask for Object
-    print("What am I supposed to clean up ?")
+    print("What am I supposed to clean up this time?")
     time.sleep(2)
 
     # Capture object input
@@ -112,7 +107,7 @@ try:
     if best_match:
         name = best_match['name']
         obj_id = best_match['id']
-        print(f"That’s the {name}. I’ll put it in box {obj_id}.")
+        print(f"Fine. That’s the {name}. Guess I’ll put it in box {obj_id}.")
     else:
         print("I have no idea what that is. I'm going back to sleep.")
         exit()
@@ -120,11 +115,15 @@ try:
     # Raise Arm for Ritual
     print("Initiating ring ritual. This is so dumb.")
     raise_arm()
-    
 
     # Navigate to Marker
+    print(f"Rotating to find Marker ID {obj_id}...")
+
     found = False
-    while not found:
+    spin_attempts = 0
+    max_attempts = 50  # safety cap
+
+    while not found and spin_attempts < max_attempts:
         frames = pipeline.wait_for_frames()
         color_frame = frames.get_color_frame()
         frame = np.asanyarray(color_frame.get_data())
@@ -135,33 +134,32 @@ try:
         if ids is not None:
             for i, marker_id in enumerate(ids):
                 if int(marker_id) == obj_id:
-                    found = True
                     # Estimate pose of the marker
                     rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners[i], 0.055, camera_matrix, dist_coeffs)
 
-                    # tvec contains x, y, z (translation vector)
                     x = tvec[0][0][0]  # left/right (meters)
                     y = tvec[0][0][1]  # up/down (meters)
-                    z = tvec[0][0][2]  # distance from camera (meters)
+                    z = tvec[0][0][2]  # forward distance (meters)
 
-                    print(f"Detected Marker ID {marker_id[0]} - X: {x:.2f}m, Y: {y:.2f}m, Z: {z:.2f}m")
+                    print(f"Found Marker {obj_id} - X: {x:.2f}, Y: {y:.2f}, Z: {z:.2f}")
 
-                    cx = corners[i][0][:, 0].mean()
-                    center = frame.shape[1] // 2
-
-                    # Turn toward marker based on center offset
-                    if cx < center - 50:
-                        robot.setTarget(4, 6000)  # pan left
-                        time.sleep(1)
-                    elif cx > center + 50:
-                        robot.setTarget(4, 6000)  # pan right
-                        time.sleep(1)
-
-                    # Move forward a bit
-                    move_forward()
-
-                    print(f"Ugh. I’m here. Box {obj_id} I guess.")
+                    found = True
                     break
+
+        if not found:
+            # ROTATE the robot left a little to scan
+            robot.rotate_left(0.25)
+            spin_attempts += 1
+
+    if not found:
+        print(f"Could not find marker ID {obj_id} after spinning. Giving up.")
+        exit()
+
+    # After finding marker, move forward a bit toward the box
+    robot.move_forward()
+
+    print(f"Ugh. I'm here. Box {obj_id} I guess.")
+    time.sleep(1)
 
     # Drop the Ring
     lower_arm()
