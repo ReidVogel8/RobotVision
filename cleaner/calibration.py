@@ -3,11 +3,11 @@ import numpy as np
 import pyrealsense2 as rs
 import pickle
 
-# === Checkerboard Settings ===
+# Checkerboard Settings
 CHECKERBOARD = (8, 6)           # Inner corners (columns, rows)
 SQUARE_SIZE = 0.055             # Size of a square in meters (55mm)
 
-# === Prepare object points ===
+# Prepare object points
 objp = np.zeros((CHECKERBOARD[0]*CHECKERBOARD[1], 3), np.float32)
 objp[:, :2] = np.mgrid[0:CHECKERBOARD[0], 0:CHECKERBOARD[1]].T.reshape(-1, 2)
 objp *= SQUARE_SIZE
@@ -15,7 +15,7 @@ objp *= SQUARE_SIZE
 objpoints = []  # 3D points in real world
 imgpoints = []  # 2D points in image plane
 
-# === Start RealSense Camera ===
+# Start RealSense Camera
 pipeline = rs.pipeline()
 config = rs.config()
 config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
@@ -57,7 +57,7 @@ finally:
     pipeline.stop()
     cv2.destroyAllWindows()
 
-# === Calibrate ===
+# Calibrate
 if len(objpoints) > 5:
     print("Calibrating...")
     ret, camera_matrix, dist_coeffs, _, _ = cv2.calibrateCamera(
@@ -72,9 +72,9 @@ if len(objpoints) > 5:
                 'dist_coeffs': dist_coeffs
             }, f)
 
-        print("\n✅ Calibration saved to calibration.pkl")
+        print("\n Calibration saved to calibration.pkl")
 
-        # === Pretty-print for Python ===
+        # Pretty-print for Python
         print("\nCamera Matrix (Python format):")
         print("[")
         for row in camera_matrix:
@@ -84,6 +84,6 @@ if len(objpoints) > 5:
         print("\nDistortion Coefficients (Python format):")
         print("[" + ", ".join(f"{val:.6f}" for val in dist_coeffs.flatten()) + "]")
     else:
-        print("❌ Calibration failed. Camera matrix is invalid.")
+        print("Calibration failed. Camera matrix is invalid.")
 else:
-    print("❌ Not enough frames captured for calibration.")
+    print("Not enough frames captured for calibration.")
