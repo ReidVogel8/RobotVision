@@ -40,9 +40,10 @@ pipeline.start(config)
 # Robot Setup
 robot = Controller()
 LEFT_ELBOW = 7
+LEFT_SHOULDER = 5
 
 def raise_arm():
-    
+    robot.setTarget(LEFT_SHOULDER, 7500)
     robot.setTarget(LEFT_ELBOW, 8700)
     time.sleep(1)
 
