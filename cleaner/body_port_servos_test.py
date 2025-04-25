@@ -38,7 +38,7 @@ class RobotControl:
         time.sleep(0.5)
         self.m.setTarget(4, 6000)
         time.sleep(0.5)
-        self.m.setTarget(5, 4500)
+        self.m.setTarget(5, 7500)
         time.sleep(0.5)
         self.m.setTarget(6, 6000)
         time.sleep(0.5)
