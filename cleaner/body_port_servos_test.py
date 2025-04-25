@@ -70,14 +70,14 @@ class RobotControl:
         self.m.setTarget(TEST_PORT, 5600)
 
     def rotate_right(self):
-        self.m.setTarget(1, 6500)
+        self.m.setTarget(0, 7000)
         time.sleep(1)
-        self.m.setTarget(1, 6000)
+        self.m.setTarget(0, 6000)
 
 robot = RobotControl()
 
 def main():
-    #robot.body_reset()
+    robot.body_reset()
     #robot.servo_test()
     robot.rotate_right()
     
