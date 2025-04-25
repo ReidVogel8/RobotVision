@@ -56,12 +56,14 @@ def lower_arm():
 
 def move_forward():
     robot.setTarget(0, 6000)
+    time.sleep(0.3)
     robot.setTarget(0, 8000)
     time.sleep(1)
     robot.setTarget(0, 6000)
     
 def rotate_left():
     robot.setTarget(1, 6000)
+    time.sleep(0.3)
     robot.setTarget(1, 6500)
     time.sleep(0.5)
     robot.setTarget(1, 6000)
