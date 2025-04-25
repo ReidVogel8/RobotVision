@@ -66,6 +66,8 @@ def move_forward():
     robot.setTarget(LEFT_WHEEL, 6000)
 
 def rotate_left():
+    robot.setTarget(RIGHT_WHEEL, 6000)
+    time.sleep(0.3)
     robot.setTarget(RIGHT_WHEEL, 6500)  # spin using right wheel
     time.sleep(0.5)
     robot.setTarget(RIGHT_WHEEL, 6000)
