@@ -57,9 +57,9 @@ def move_forward():
     time.sleep(1)
     robot.setTarget(0, 6000)
     
-def rotate_left(duration):
+def rotate_left():
     robot.setTarget(0, 6500)
-    time.sleep(duration)
+    time.sleep(0.5)
     robot.setTarget(0, 6000)
 
 # Face Detector
@@ -151,7 +151,7 @@ try:
 
         if not found:
             # ROTATE the robot left a little to scan
-            rotate_left(0.5)
+            rotate_left()
             spin_attempts += 1
 
     if not found:
