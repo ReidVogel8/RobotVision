@@ -17,7 +17,7 @@ LEFT_HAND_CLOSE = 10
 RIGHT_SHOULDER_UP_DOWN = 11
 RIGHT_SHOULDER_LEFT_RIGHT = 12
 
-TEST_PORT = 7
+TEST_PORT = 5
 
 class RobotControl:
     _instance = None
@@ -64,7 +64,7 @@ class RobotControl:
         time.sleep(0.5)
 
     def servo_test(self):
-        self.m.setTarget(TEST_PORT, 7900)
+        self.m.setTarget(TEST_PORT, 9000)
         time.sleep(1)
         self.m.setTarget(TEST_PORT, 5600)
 
