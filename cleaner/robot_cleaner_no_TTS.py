@@ -149,7 +149,7 @@ try:
                     x = tvec[0][0][0]
                     y = tvec[0][0][1]
                     z = tvec[0][0][2]
-                    print(f"📍 Found Marker {obj_id} - X: {x:.2f}m, Y: {y:.2f}m, Z: {z:.2f}m")
+                    print(f"Found Marker {obj_id} - X: {x:.2f}m, Y: {y:.2f}m, Z: {z:.2f}m")
                     found = True
                     break
 
@@ -158,12 +158,50 @@ try:
             spin_attempts += 1
 
     if not found:
-        print(f"❌ Could not find marker ID {obj_id} after spinning. Giving up.")
+        print(f"Could not find marker ID {obj_id} after spinning. Giving up.")
         exit()
 
     # Move forward after finding marker
-    print("Moving toward the box...")
-    move_forward()
+    print("Approaching the marker...")
+
+    # Define stopping distance threshold
+    target_distance = 0.5  # meters
+    close_enough = False
+    approach_attempts = 0
+    max_approach_attempts = 10
+
+    while not close_enough and approach_attempts < max_approach_attempts:
+        # Get latest frame
+        frames = pipeline.wait_for_frames()
+        color_frame = frames.get_color_frame()
+        frame = np.asanyarray(color_frame.get_data())
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        # Detect ArUco marker
+        corners, ids, _ = detector.detectMarkers(gray)
+        if ids is not None:
+            for i, marker_id in enumerate(ids):
+                if int(marker_id) == obj_id:
+                    rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners[i], 0.055, camera_matrix, dist_coeffs)
+                    z = tvec[0][0][2]
+                    print(f"📏 Distance to marker (Z): {z:.2f} meters")
+
+                    if z <= target_distance:
+                        print("✅ Close enough to the box.")
+                        close_enough = True
+                        break
+
+        if not close_enough:
+            print("🚶 Moving a bit closer...")
+            robot.setTarget(LEFT_WHEEL, 6000)
+            robot.setTarget(LEFT_WHEEL, 8000)
+            time.sleep(0.3)  # small movement step
+            robot.setTarget(LEFT_WHEEL, 6000)
+            time.sleep(0.2)  # small pause
+            approach_attempts += 1
+
+    if not close_enough:
+        print("⚠️ Stopped approaching: Max attempts reached.")
 
     # Lower the arm after moving
     print("Lowering arm and dropping ring.")
