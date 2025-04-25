@@ -49,6 +49,11 @@ def lower_arm():
     robot.setTarget(LEFT_ELBOW, 5600)
     time.sleep(1)
 
+def move_forward():
+    robot.setTarget(0, 8000)
+    time.sleep(1)
+    robot.setTarget(0, 6000)
+
 # Face Detector
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
@@ -120,10 +125,20 @@ try:
             for i, marker_id in enumerate(ids):
                 if int(marker_id) == obj_id:
                     found = True
+                    # Estimate pose of the marker
+                    rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners[i], 0.055, camera_matrix, dist_coeffs)
+
+                    # tvec contains x, y, z (translation vector)
+                    x = tvec[0][0][0]  # left/right (meters)
+                    y = tvec[0][0][1]  # up/down (meters)
+                    z = tvec[0][0][2]  # distance from camera (meters)
+
+                    print(f"📍 Detected Marker ID {marker_id[0]} - X: {x:.2f}m, Y: {y:.2f}m, Z: {z:.2f}m")
+
                     cx = corners[i][0][:, 0].mean()
                     center = frame.shape[1] // 2
 
-                    # Turn to face it
+                    # Turn toward marker based on center offset
                     if cx < center - 50:
                         robot.setTarget(4, 7700)  # pan left
                         time.sleep(1)
@@ -131,12 +146,8 @@ try:
                         robot.setTarget(4, 4700)  # pan right
                         time.sleep(1)
 
-                    # Move forward (very basic)
-                    robot.setTarget(0, 5000)  # left wheel
-                    robot.setTarget(1, 7000)  # right wheel
-                    time.sleep(2)
-                    robot.setTarget(0, 6000)
-                    robot.setTarget(1, 6000)
+                    # Move forward a bit
+                    robot.move_forward()
 
                     print(f"Ugh. I’m here. Box {obj_id} I guess.")
                     break
@@ -160,11 +171,7 @@ try:
                 if int(marker_id) == 0:
                     returning = True
                     # move forward-ish
-                    robot.setTarget(0, 5000)
-                    robot.setTarget(1, 7000)
-                    time.sleep(2)
-                    robot.setTarget(0, 6000)
-                    robot.setTarget(1, 6000)
+                    robot.move_forward()
                     break
 
     print("Cleaning complete. Barely.")
