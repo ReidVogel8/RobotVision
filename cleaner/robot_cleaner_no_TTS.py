@@ -133,21 +133,21 @@ try:
                     y = tvec[0][0][1]  # up/down (meters)
                     z = tvec[0][0][2]  # distance from camera (meters)
 
-                    print(f"📍 Detected Marker ID {marker_id[0]} - X: {x:.2f}m, Y: {y:.2f}m, Z: {z:.2f}m")
+                    print(f"Detected Marker ID {marker_id[0]} - X: {x:.2f}m, Y: {y:.2f}m, Z: {z:.2f}m")
 
                     cx = corners[i][0][:, 0].mean()
                     center = frame.shape[1] // 2
 
                     # Turn toward marker based on center offset
                     if cx < center - 50:
-                        robot.setTarget(4, 7700)  # pan left
+                        robot.setTarget(4, 6000)  # pan left
                         time.sleep(1)
                     elif cx > center + 50:
-                        robot.setTarget(4, 4700)  # pan right
+                        robot.setTarget(4, 6000)  # pan right
                         time.sleep(1)
 
                     # Move forward a bit
-                    robot.move_forward()
+                    move_forward()
 
                     print(f"Ugh. I’m here. Box {obj_id} I guess.")
                     break
