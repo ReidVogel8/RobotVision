@@ -39,9 +39,14 @@ pipeline.start(config)
 
 # Robot Setup
 robot = Controller()
+
+# Motor Ports
+LEFT_WHEEL = 0
+RIGHT_WHEEL = 1
 LEFT_ELBOW = 7
 LEFT_SHOULDER = 5
 
+# Movement Functions
 def raise_arm():
     robot.setTarget(LEFT_SHOULDER, 7500)
     time.sleep(0.5)
@@ -55,18 +60,15 @@ def lower_arm():
     time.sleep(1)
 
 def move_forward():
-    robot.setTarget(0, 6000)
-    time.sleep(0.3)
-    robot.setTarget(0, 8000)
+    robot.setTarget(LEFT_WHEEL, 6000)
+    robot.setTarget(LEFT_WHEEL, 8000)
     time.sleep(1)
-    robot.setTarget(0, 6000)
-    
+    robot.setTarget(LEFT_WHEEL, 6000)
+
 def rotate_left():
-    robot.setTarget(1, 6000)
-    time.sleep(0.3)
-    robot.setTarget(1, 6500)
+    robot.setTarget(RIGHT_WHEEL, 6500)  # spin using right wheel
     time.sleep(0.5)
-    robot.setTarget(1, 6000)
+    robot.setTarget(RIGHT_WHEEL, 6000)
 
 # Face Detector
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
@@ -117,15 +119,13 @@ try:
         name = best_match['name']
         obj_id = best_match['id']
         print(f"Fine. That’s the {name}. Guess I’ll put it in box {obj_id}.")
+        print("Initiating ring ritual. Raising arm.")
+        raise_arm()
     else:
         print("I have no idea what that is. I'm going back to sleep.")
         exit()
 
-    # Raise Arm for Ritual
-    print("Initiating ring ritual. This is so dumb.")
-    raise_arm()
-
-    # Navigate to Marker
+    # Rotate to find marker
     print(f"Rotating to find Marker ID {obj_id}...")
 
     found = False
@@ -143,36 +143,29 @@ try:
         if ids is not None:
             for i, marker_id in enumerate(ids):
                 if int(marker_id) == obj_id:
-                    # Estimate pose of the marker
                     rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners[i], 0.055, camera_matrix, dist_coeffs)
-
-                    x = tvec[0][0][0]  # left/right (meters)
-                    y = tvec[0][0][1]  # up/down (meters)
-                    z = tvec[0][0][2]  # forward distance (meters)
-
-                    print(f"Found Marker {obj_id} - X: {x:.2f}, Y: {y:.2f}, Z: {z:.2f}")
-
+                    x = tvec[0][0][0]
+                    y = tvec[0][0][1]
+                    z = tvec[0][0][2]
+                    print(f"📍 Found Marker {obj_id} - X: {x:.2f}m, Y: {y:.2f}m, Z: {z:.2f}m")
                     found = True
                     break
 
         if not found:
-            # ROTATE the robot left a little to scan
             rotate_left()
             spin_attempts += 1
 
     if not found:
-        print(f"Could not find marker ID {obj_id} after spinning. Giving up.")
+        print(f"❌ Could not find marker ID {obj_id} after spinning. Giving up.")
         exit()
 
-    # After finding marker, move forward a bit toward the box
+    # Move forward after finding marker
+    print("Moving toward the box...")
     move_forward()
 
-    print(f"Ugh. I'm here. Box {obj_id} I guess.")
-    time.sleep(1)
-
-    # Drop the Ring
+    # Lower the arm after moving
+    print("Lowering arm and dropping ring.")
     lower_arm()
-    print("There. I dropped it.")
 
     # Return to Center (marker ID 0)
     print("Returning to the start. Barely.")
@@ -188,8 +181,7 @@ try:
             for i, marker_id in enumerate(ids):
                 if int(marker_id) == 0:
                     returning = True
-                    # move forward-ish
-                    robot.move_forward()
+                    move_forward()
                     break
 
     print("Cleaning complete. Barely.")
