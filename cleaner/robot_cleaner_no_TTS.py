@@ -54,7 +54,7 @@ def raise_arm():
     time.sleep(1)
 
 def lower_arm():
-    robot.setTarget(LEFT_SHOULDER, 6000)
+    robot.setTarget(LEFT_SHOULDER, 8000)
     time.sleep(0.3)
     robot.setTarget(LEFT_ELBOW, 5600)
     time.sleep(1)
