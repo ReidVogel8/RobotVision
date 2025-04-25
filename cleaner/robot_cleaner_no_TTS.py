@@ -159,7 +159,7 @@ try:
         exit()
 
     # After finding marker, move forward a bit toward the box
-    robot.move_forward()
+    move_forward()
 
     print(f"Ugh. I'm here. Box {obj_id} I guess.")
     time.sleep(1)
