@@ -71,7 +71,7 @@ class RobotControl:
 
     def rotate_right(self):
         self.m.setTarget(1, 7000)
-        time.sleep(1)
+        time.sleep(2)
         self.m.setTarget(1, 6000)
 
 robot = RobotControl()
