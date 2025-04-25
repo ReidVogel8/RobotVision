@@ -69,7 +69,7 @@ class RobotControl:
         self.m.setTarget(TEST_PORT, 5600)
 
     def rotate_left(self):
-        #self.m.setTarget(1,6000)
+        self.m.setTarget(1,6000)
         self.m.setTarget(1, 7000)
         time.sleep(2)
         self.m.setTarget(1, 6000)
