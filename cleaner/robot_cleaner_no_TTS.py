@@ -54,6 +54,11 @@ def move_forward():
     time.sleep(1)
     robot.setTarget(0, 6000)
 
+def rotate_right():
+    robot.setTarget(1, 6500)
+    time.sleep(1)
+    robot.setTarget(1, 6000)
+
 # Face Detector
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
