@@ -4,7 +4,7 @@ import pyrealsense2 as rs
 import pickle
 
 # Checkerboard Settings
-CHECKERBOARD = (9, 7)           # Inner corners (columns, rows)
+CHECKERBOARD = (8, 6)           # Inner corners (columns, rows)
 SQUARE_SIZE = 0.055             # Size of a square in meters (55mm)
 
 # Prepare object points
