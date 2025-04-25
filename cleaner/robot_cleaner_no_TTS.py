@@ -73,11 +73,11 @@ try:
         face_detected = any(w > 100 and h > 100 for (x, y, w, h) in faces)
 
         if face_detected:
-            print("Ugh. What now?")
+            print("What now?")
             break
 
     # Ask for Object
-    print("What am I supposed to clean up this time?")
+    print("What am I supposed to clean up ?")
     time.sleep(2)
 
     # Capture object input
@@ -102,7 +102,7 @@ try:
     if best_match:
         name = best_match['name']
         obj_id = best_match['id']
-        print(f"Fine. That’s the {name}. Guess I’ll put it in box {obj_id}.")
+        print(f"That’s the {name}. I’ll put it in box {obj_id}.")
     else:
         print("I have no idea what that is. I'm going back to sleep.")
         exit()
@@ -110,6 +110,7 @@ try:
     # Raise Arm for Ritual
     print("Initiating ring ritual. This is so dumb.")
     raise_arm()
+    
 
     # Navigate to Marker
     found = False
