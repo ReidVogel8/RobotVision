@@ -59,16 +59,17 @@ def lower_arm():
     robot.setTarget(LEFT_ELBOW, 5600)
     time.sleep(1)
 
-def move_forward():
+def move_forward(duration):
     robot.setTarget(LEFT_WHEEL, 6000)
+    time.sleep(0.3)
     robot.setTarget(LEFT_WHEEL, 8000)
-    time.sleep(1)
+    time.sleep(duration)
     robot.setTarget(LEFT_WHEEL, 6000)
 
 def rotate_left():
     robot.setTarget(RIGHT_WHEEL, 6000)
     time.sleep(0.3)
-    robot.setTarget(RIGHT_WHEEL, 6500)  # spin using right wheel
+    robot.setTarget(RIGHT_WHEEL, 6500)
     time.sleep(0.5)
     robot.setTarget(RIGHT_WHEEL, 6000)
 
@@ -132,7 +133,7 @@ try:
 
     found = False
     spin_attempts = 0
-    max_attempts = 50  # safety cap
+    max_attempts = 10  # safety cap
 
     while not found and spin_attempts < max_attempts:
         frames = pipeline.wait_for_frames()
@@ -187,21 +188,18 @@ try:
                     print(f"📏 Distance to marker (Z): {z:.2f} meters")
 
                     if z <= target_distance:
-                        print("✅ Close enough to the box.")
+                        print("Close enough to the box.")
                         close_enough = True
                         break
 
         if not close_enough:
             print("🚶 Moving a bit closer...")
-            robot.setTarget(LEFT_WHEEL, 6000)
-            robot.setTarget(LEFT_WHEEL, 8000)
-            time.sleep(0.3)  # small movement step
-            robot.setTarget(LEFT_WHEEL, 6000)
+            move_forward(0.3)
             time.sleep(0.2)  # small pause
             approach_attempts += 1
 
     if not close_enough:
-        print("⚠️ Stopped approaching: Max attempts reached.")
+        print("Stopped approaching: Max attempts reached.")
 
     # Lower the arm after moving
     print("Lowering arm and dropping ring.")
