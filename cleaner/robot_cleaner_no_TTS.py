@@ -166,7 +166,7 @@ try:
     print("Approaching the marker...")
 
     # Define stopping distance threshold
-    target_distance = 0.5  # meters
+    target_distance = 0.2  # meters
     close_enough = False
     approach_attempts = 0
     max_approach_attempts = 10
@@ -185,7 +185,7 @@ try:
                 if int(marker_id) == obj_id:
                     rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners[i], 0.055, camera_matrix, dist_coeffs)
                     z = tvec[0][0][2]
-                    print(f"📏 Distance to marker (Z): {z:.2f} meters")
+                    print(f"Distance to marker (Z): {z:.2f} meters")
 
                     if z <= target_distance:
                         print("Close enough to the box.")
@@ -193,9 +193,9 @@ try:
                         break
 
         if not close_enough:
-            print("🚶 Moving a bit closer...")
+            print("Moving a bit closer...")
             move_forward(0.3)
-            time.sleep(0.2)  # small pause
+            time.sleep(0.2)
             approach_attempts += 1
 
     if not close_enough:
