@@ -66,6 +66,13 @@ def move_forward(duration):
     time.sleep(duration)
     robot.setTarget(LEFT_WHEEL, 6000)
 
+def move_backward(duration):
+    robot.setTarget(LEFT_WHEEL, 6000)
+    time.sleep(0.3)
+    robot.setTarget(LEFT_WHEEL, 5000)
+    time.sleep(duration)
+    robot.setTarget(LEFT_WHEEL, 6000)
+
 def rotate_left():
     robot.setTarget(RIGHT_WHEEL, 6000)
     time.sleep(0.3)
@@ -206,7 +213,7 @@ try:
     lower_arm()
 
     # Return to Center (marker ID 0)
-    print("Returning to the start. Barely.")
+    print("Returning to the start.")
     returning = False
     while not returning:
         frames = pipeline.wait_for_frames()
@@ -219,7 +226,7 @@ try:
             for i, marker_id in enumerate(ids):
                 if int(marker_id) == 0:
                     returning = True
-                    move_forward()
+                    move_backward(1)
                     break
 
     print("Cleaning complete. Barely.")
