@@ -2,114 +2,206 @@ import cv2
 import pickle
 import numpy as np
 import pyrealsense2 as rs
+import time
+from maestro import Controller  # Your Maestro controller class
 
-# ORB Feature Detector
+# Load Calibration
+with open("calibration.pkl", "rb") as f:
+    calib = pickle.load(f)
+    camera_matrix = calib["camera_matrix"]
+    dist_coeffs = calib["dist_coeffs"]
+
+# Load Trained Objects
+with open("trainedObjects.pkl", "rb") as f:
+    trained_objects = pickle.load(f)
+
+# Rebuild Keypoints
+for obj in trained_objects:
+    obj['keypoints'] = [
+        cv2.KeyPoint(pt[0][0], pt[0][1], pt[1], pt[2], pt[3], int(pt[4]), int(pt[5]))
+        for pt in obj['keypoints']
+    ]
+
+# ORB Matcher
 orb = cv2.ORB_create(nfeatures=1000)
+bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 
-# Data Structure to Hold Object Data
-trained_objects = []
-object_count = 0
-MAX_OBJECTS = 3
+# ArUco Setup
+aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
+parameters = cv2.aruco.DetectorParameters()
+detector = cv2.aruco.ArucoDetector(aruco_dict, parameters)
 
-# Mouse Callback for Bounding Box
-drawing = False
-ix, iy = -1, -1
-current_roi = None
-
-def draw_rectangle(event, x, y, flags, param):
-    global ix, iy, drawing, current_roi
-
-    if event == cv2.EVENT_LBUTTONDOWN:
-        drawing = True
-        ix, iy = x, y
-
-    elif event == cv2.EVENT_MOUSEMOVE:
-        if drawing:
-            current_roi = (ix, iy, x, y)
-
-    elif event == cv2.EVENT_LBUTTONUP:
-        drawing = False
-        current_roi = (ix, iy, x, y)
-
-# Start RealSense Camera
+# RealSense Setup
 pipeline = rs.pipeline()
 config = rs.config()
 config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
 pipeline.start(config)
 
-cv2.namedWindow('Training Mode')
-cv2.setMouseCallback('Training Mode', draw_rectangle)
+# Robot Setup
+robot = Controller()
 
-print("Training Mode Active")
-print("Draw a box around each object and press 's' to save.")
+# Motor Ports
+LEFT_WHEEL = 0
+RIGHT_WHEEL = 1
+LEFT_ELBOW = 7
+LEFT_SHOULDER = 5
 
+# Movement Functions
+def raise_arm():
+    robot.setTarget(LEFT_SHOULDER, 5600)
+    time.sleep(0.5)
+    robot.setTarget(LEFT_ELBOW, 8700)
+    time.sleep(1)
+
+def lower_arm():
+    robot.setTarget(LEFT_SHOULDER, 8000)
+    time.sleep(0.3)
+    robot.setTarget(LEFT_ELBOW, 5600)
+    time.sleep(1)
+
+def move_forward(duration):
+    robot.setTarget(LEFT_WHEEL, 6000)
+    time.sleep(0.3)
+    robot.setTarget(LEFT_WHEEL, 8000)
+    time.sleep(duration)
+    robot.setTarget(LEFT_WHEEL, 6000)
+
+def move_backward(duration):
+    robot.setTarget(LEFT_WHEEL, 6000)
+    time.sleep(0.3)
+    robot.setTarget(LEFT_WHEEL, 5000)
+    time.sleep(duration)
+    robot.setTarget(LEFT_WHEEL, 6000)
+
+def small_rotate_left():
+    print("test")
+    robot.setTarget(RIGHT_WHEEL, 6000)
+    time.sleep(0.1)
+    robot.setTarget(RIGHT_WHEEL, 6500)
+    time.sleep(0.2)
+    robot.setTarget(RIGHT_WHEEL, 6000)
+    time.sleep(0.1)
+
+# Face Detector
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+
+# Main Routine
 try:
-    while object_count < MAX_OBJECTS:
+    print("Robot ready. Scanning for face...")
+
+    while True:
         frames = pipeline.wait_for_frames()
         color_frame = frames.get_color_frame()
         if not color_frame:
             continue
-
         frame = np.asanyarray(color_frame.get_data())
-        display = frame.copy()
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-        # Draw the bounding box if in progress
-        if current_roi:
-            x1, y1, x2, y2 = current_roi
-            cv2.rectangle(display, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+        face_detected = any(w > 100 and h > 100 for (x, y, w, h) in faces)
 
-        cv2.putText(display, f"Object {object_count + 1}/{MAX_OBJECTS}: Draw box and press 's'",
-                    (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
-
-        cv2.imshow('Training Mode', display)
-        key = cv2.waitKey(1) & 0xFF
-
-        if key == ord('s') and current_roi:
-            x1, y1, x2, y2 = current_roi
-            roi = frame[min(y1, y2):max(y1, y2), min(x1, x2):max(x1, x2)]
-
-            if roi.size == 0:
-                print("Invalid ROI size. Try again.")
-                continue
-
-            gray_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-            keypoints, descriptors = orb.detectAndCompute(gray_roi, None)
-
-            if descriptors is None or len(keypoints) < 5:
-                print("Not enough keypoints. Try again.")
-                continue
-
-            name = input(f"Enter name for object {object_count + 1}: ")
-            obj_id = object_count + 1  # This will map to ArUco marker ID (1–4)
-            trained_objects.append({
-                'name': name,
-                'id': obj_id,
-                'keypoints': keypoints,
-                'descriptors': descriptors
-            })
-
-            print(f"Object '{name}' saved with ID {obj_id}")
-            object_count += 1
-            current_roi = None  # Reset ROI
-
-        elif key == ord('q'):
-            print("Quit without saving.")
+        if face_detected:
+            print("Ugh. What now?")
             break
 
+    # Ask for Object
+    print("What am I supposed to clean up this time?")
+    time.sleep(2)
+
+    # Capture object input
+    frames = pipeline.wait_for_frames()
+    color_frame = frames.get_color_frame()
+    frame = np.asanyarray(color_frame.get_data())
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    # ORB Detect on Current Frame
+    kp, des = orb.detectAndCompute(gray, None)
+
+    best_match = None
+    best_matches = []
+
+    for obj in trained_objects:
+        matches = bf.match(des, obj['descriptors'])
+        matches = sorted(matches, key=lambda x: x.distance)
+        if len(matches) > len(best_matches):
+            best_matches = matches
+            best_match = obj
+
+    if best_match:
+        name = best_match['name']
+        obj_id = best_match['id']
+        print(f"Fine. That’s the {name}. Guess I’ll put it in box {obj_id}.")
+        print("Initiating ring ritual. Raising arm.")
+        raise_arm()
+    else:
+        print("I have no idea what that is. I'm going back to sleep.")
+        exit()
+
+    # === New section: Spin while scanning for marker ===
+    print("Scanning for marker while rotating...")
+
+    found_marker = False
+    while not found_marker:
+        frames = pipeline.wait_for_frames()
+        color_frame = frames.get_color_frame()
+        if not color_frame:
+            continue
+        frame = np.asanyarray(color_frame.get_data())
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        corners, ids, _ = detector.detectMarkers(gray)
+
+        if ids is not None:
+            for i, marker_id in enumerate(ids):
+                if int(marker_id) == obj_id:
+                    rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners[i], 0.055, camera_matrix, dist_coeffs)
+                    x = tvec[0][0][0]
+                    y = tvec[0][0][1]
+                    z = tvec[0][0][2]
+                    print(f"Found Marker {obj_id} - X: {x:.2f}m, Y: {y:.2f}m, Z: {z:.2f}m")
+                    found_marker = True
+                    break
+        if not found_marker:
+            print("Marker not found, rotating slightly...")
+            small_rotate_left()
+
+    print("Approaching the marker...")
+
+    # === New approach loop: Move forward until z <= 0.08 meters ===
+    close_enough = False
+    while not close_enough:
+        frames = pipeline.wait_for_frames()
+        color_frame = frames.get_color_frame()
+        if not color_frame:
+            continue
+        frame = np.asanyarray(color_frame.get_data())
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        corners, ids, _ = detector.detectMarkers(gray)
+
+        if ids is not None:
+            for i, marker_id in enumerate(ids):
+                if int(marker_id) == obj_id:
+                    rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners[i], 0.055, camera_matrix, dist_coeffs)
+                    z = tvec[0][0][2]
+                    print(f"Distance to marker (Z): {z:.3f} meters")
+
+                    if z <= 0.08:
+                        print("Reached close enough to marker.")
+                        close_enough = True
+                        break
+        if not close_enough:
+            move_backward(0.2)
+            time.sleep(0.1)
+
+    # Lower arm when close enough
+    print("Lowering arm and dropping ring.")
+    lower_arm()
+
+    print("Task complete.")
+
+except KeyboardInterrupt:
+    print("Interrupted by user.")
 finally:
     pipeline.stop()
     cv2.destroyAllWindows()
-
-# Save Descriptors to File
-if len(trained_objects) == MAX_OBJECTS:
-    # Convert keypoints to savable form
-    for obj in trained_objects:
-        obj['keypoints'] = [(kp.pt, kp.size, kp.angle, kp.response, kp.octave, kp.class_id)
-                            for kp in obj['keypoints']]
-
-    with open("trainedObjects.pkl", "wb") as f:
-        pickle.dump(trained_objects, f)
-
-    print("All objects saved to trainedObjects.pkl")
-else:
-    print("Not enough objects trained. Please restart.")
