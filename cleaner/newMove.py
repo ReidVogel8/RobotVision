@@ -78,8 +78,8 @@ def small_rotate_left():
     robot.setTarget(1, 6000)
     time.sleep(0.5)
     robot.setTarget(1, 7000)
-    time.sleep(0.5)
-    srobot.setTarget(1, 6000)
+    time.sleep(0.2)
+    robot.setTarget(1, 6000)
 
 # Face Detector
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
@@ -163,6 +163,7 @@ try:
                     break
         if not found_marker:
             print("Marker not found, rotating slightly...")
+            time.sleep(0.5)
             small_rotate_left()
 
     print("Approaching the marker...")
