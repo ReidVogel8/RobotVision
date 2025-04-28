@@ -81,7 +81,7 @@ class RobotControl:
         self.m.setTarget(0, 6000)
         time.sleep(0.5)
         self.m.setTarget(0, 6500)
-        time.sleep(0.5)
+        time.sleep(2)
         self.m.setTarget(0, 6000)
 
 robot = RobotControl()
