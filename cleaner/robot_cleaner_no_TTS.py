@@ -22,9 +22,9 @@ for obj in trained_objects:
         for pt in obj['keypoints']
     ]
 
-# ORB Matcher
+# ORB Matcher (using ratio test)
 orb = cv2.ORB_create(nfeatures=1000)
-bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=False)
 
 # ArUco Setup
 aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
@@ -115,30 +115,37 @@ try:
     # ORB Detect on Current Frame
     kp, des = orb.detectAndCompute(gray, None)
 
-    # Matching with distance threshold
+    # If no features detected, skip recognition
+    if des is None or len(kp) < 10:
+        print("No keypoints detected. I'm going back to sleep.")
+        exit()
+
+    # Matching with Lowe's ratio test
     best_match = None
     best_good_matches = []
-    MIN_MATCH_COUNT = 10     # tune as needed
-    DIST_THRESHOLD = 30      # ORB Hamming distance threshold
+    MIN_MATCH_COUNT = 15      # increase to reduce false positives
+    RATIO = 0.75             # Lowe's ratio threshold
 
     for obj in trained_objects:
-        matches = bf.match(des, obj['descriptors'])
-        # keep only good matches below distance threshold
-        good = [m for m in matches if m.distance < DIST_THRESHOLD]
+        # k-NN match, take the two best
+        matches = bf.knnMatch(des, obj['descriptors'], k=2)
+        # Apply ratio test
+        good = [m for m, n in matches if m.distance < RATIO * n.distance]
         if len(good) > len(best_good_matches):
             best_good_matches = good
             best_match = obj
 
     # Verify we have enough good matches
-    if best_match and len(best_good_matches) >= MIN_MATCH_COUNT:
-        name = best_match['name']
-        obj_id = best_match['id']
-        print(f"Fine. That’s the {name}. Guess I’ll put it in box {obj_id}.")
-        print("Initiating ring ritual. Raising arm.")
-        raise_arm()
-    else:
+    if not best_match or len(best_good_matches) < MIN_MATCH_COUNT:
         print("I have no idea what that is. I'm going back to sleep.")
         exit()
+
+    # Recognized object
+    name = best_match['name']
+    obj_id = best_match['id']
+    print(f"Fine. That’s the {name}. Guess I’ll put it in box {obj_id}.")
+    print("Initiating ring ritual. Raising arm.")
+    raise_arm()
 
     # Rotate to find marker
     print(f"Rotating to find Marker ID {obj_id}...")
@@ -177,7 +184,6 @@ try:
     # Move forward after finding marker
     print("Approaching the marker...")
 
-    # Define stopping distance threshold
     target_distance = 0.2  # meters
     close_enough = False
     approach_attempts = 0
@@ -213,11 +219,9 @@ try:
     if not close_enough:
         print("Stopped approaching: Max attempts reached.")
 
-    # Lower the arm after moving
     print("Lowering arm and dropping ring.")
     lower_arm()
 
-    # Return to Center (marker ID 0)
     print("Returning to the start.")
     move_backward(1)
 
