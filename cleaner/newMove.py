@@ -74,6 +74,7 @@ def move_backward(duration):
     robot.setTarget(LEFT_WHEEL, 6000)
 
 def small_rotate_left():
+    print("test")
     robot.setTarget(RIGHT_WHEEL, 6000)
     time.sleep(0.1)
     robot.setTarget(RIGHT_WHEEL, 6500)
@@ -190,7 +191,7 @@ try:
                         close_enough = True
                         break
         if not close_enough:
-            move_forward(0.2)
+            move_backward(0.2)
             time.sleep(0.1)
 
     # Lower arm when close enough
