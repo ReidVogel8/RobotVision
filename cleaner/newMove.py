@@ -199,6 +199,8 @@ try:
     # Lower arm when close enough
     print("Lowering arm and dropping ring.")
     lower_arm()
+    time.sleep(0.5)
+    # move backwards
 
     print("Task complete.")
 
