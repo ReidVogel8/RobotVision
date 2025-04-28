@@ -73,15 +73,13 @@ def move_backward(duration):
     time.sleep(duration)
     robot.setTarget(LEFT_WHEEL, 6000)
 
-def small_rotate_left():
-    print("test")
-    time.sleep(0.1)
+def rotate_left():
+    time.sleep(0.3)
     robot.setTarget(RIGHT_WHEEL, 6000)
-    time.sleep(0.1)
+    time.sleep(0.3)
     robot.setTarget(RIGHT_WHEEL, 6500)
-    time.sleep(0.2)
+    time.sleep(0.5)
     robot.setTarget(RIGHT_WHEEL, 6000)
-    time.sleep(0.1)
 
 # Face Detector
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
@@ -138,15 +136,16 @@ try:
         print("I have no idea what that is. I'm going back to sleep.")
         exit()
 
-    # === New section: Spin while scanning for marker ===
-    print("Scanning for marker while rotating...")
+    # Rotate to find marker
+    print(f"Rotating to find Marker ID {obj_id}...")
 
-    found_marker = False
-    while not found_marker:
+    found = False
+    spin_attempts = 0
+    max_attempts = 10  # safety cap
+
+    while not found and spin_attempts < max_attempts:
         frames = pipeline.wait_for_frames()
         color_frame = frames.get_color_frame()
-        if not color_frame:
-            continue
         frame = np.asanyarray(color_frame.get_data())
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
@@ -160,46 +159,85 @@ try:
                     y = tvec[0][0][1]
                     z = tvec[0][0][2]
                     print(f"Found Marker {obj_id} - X: {x:.2f}m, Y: {y:.2f}m, Z: {z:.2f}m")
-                    found_marker = True
+                    found = True
                     break
-        if not found_marker:
-            print("Marker not found, rotating slightly...")
-            small_rotate_left()
 
+        if not found:
+            rotate_left()
+            spin_attempts += 1
+
+    if not found:
+        print(f"Could not find marker ID {obj_id} after spinning. Giving up.")
+        exit()
+
+    # Move forward after finding marker
     print("Approaching the marker...")
 
-    # === New approach loop: Move forward until z <= 0.08 meters ===
+    # Define stopping criteria
+    MARKER_LENGTH_METERS = 0.055  # physical side length of your printed marker
+    TARGET_DISTANCE_M = 0.25  # stop when you're within 25 cm
+    PIXEL_SIZE_THRESHOLD = 200  # stop if side length in px exceeds this
+
     close_enough = False
-    while not close_enough:
+    approach_attempts = 0
+    max_approach_attempts = 15
+
+    while not close_enough and approach_attempts < max_approach_attempts:
+        # grab a fresh frame
         frames = pipeline.wait_for_frames()
         color_frame = frames.get_color_frame()
-        if not color_frame:
-            continue
         frame = np.asanyarray(color_frame.get_data())
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
+        # detect markers
         corners, ids, _ = detector.detectMarkers(gray)
-
         if ids is not None:
-            for i, marker_id in enumerate(ids):
-                if int(marker_id) == obj_id:
-                    rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners[i], 0.055, camera_matrix, dist_coeffs)
-                    z = tvec[0][0][2]
-                    print(f"Distance to marker (Z): {z:.3f} meters")
+            ids = ids.flatten()
+            if obj_id in ids:
+                idx = list(ids).index(obj_id)
+                corner = corners[idx].reshape((4, 2))
 
-                    if z <= 0.08:
-                        print("Reached close enough to marker.")
-                        close_enough = True
-                        break
-        if not close_enough:
-            move_backward(0.2)
-            time.sleep(0.1)
+                # 1) Pixel‐size check
+                #   compute the length of one side in pixels
+                side_px = np.linalg.norm(corner[0] - corner[1])
+                print(f"Marker side in px: {side_px:.1f}")
+                if side_px >= PIXEL_SIZE_THRESHOLD:
+                    print("→ Close enough (pixel size).")
+                    close_enough = True
+                    break
 
-    # Lower arm when close enough
+                # 2) Pose‐based check
+                rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(
+                    [corners[idx]], MARKER_LENGTH_METERS,
+                    camera_matrix, dist_coeffs
+                )
+                z = tvecs[0][0][2]
+                print(f"Distance to marker: {z:.2f} m")
+                if z <= TARGET_DISTANCE_M:
+                    print("→ Close enough (pose).")
+                    close_enough = True
+                    break
+
+        # if we get here, we’re not close enough
+        print("Moving a bit closer…")
+        move_forward(0.3)
+        time.sleep(0.2)
+        approach_attempts += 1
+
+    if not close_enough:
+        print("Warning: max approach attempts reached without getting close enough.")
+    else:
+        print("Arrived at the box.")
+
+    # Lower the arm after moving
     print("Lowering arm and dropping ring.")
     lower_arm()
 
-    print("Task complete.")
+    # Return to Center (marker ID 0)
+    print("Returning to the start.")
+    move_backward(1)
+
+    print("Cleaning complete. Barely.")
 
 except KeyboardInterrupt:
     print("Interrupted by user.")
