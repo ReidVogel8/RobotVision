@@ -214,20 +214,7 @@ try:
 
     # Return to Center (marker ID 0)
     print("Returning to the start.")
-    returning = False
-    while not returning:
-        frames = pipeline.wait_for_frames()
-        color_frame = frames.get_color_frame()
-        frame = np.asanyarray(color_frame.get_data())
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-        corners, ids, _ = detector.detectMarkers(gray)
-        if ids is not None:
-            for i, marker_id in enumerate(ids):
-                if int(marker_id) == 0:
-                    returning = True
-                    move_backward(1)
-                    break
+    move_backward(1)
 
     print("Cleaning complete. Barely.")
 
