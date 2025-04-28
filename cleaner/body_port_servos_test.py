@@ -76,11 +76,20 @@ class RobotControl:
         time.sleep(2)
         self.m.setTarget(1, 6000)
 
+    def forward(self):
+        time.sleep(0.5)
+        self.m.setTarget(0, 6000)
+        time.sleep(0.5)
+        self.m.setTarget(0, 6500)
+        time.sleep(0.5)
+        self.m.setTarget(0, 6000)
+
 robot = RobotControl()
 
 def main():
     #robot.body_reset()
     #robot.servo_test()
-    robot.rotate_left()
+    #robot.rotate_left()
+    robot.forward()
     
 main()
