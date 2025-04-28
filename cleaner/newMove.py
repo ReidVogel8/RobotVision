@@ -163,7 +163,7 @@ try:
                     break
         if not found_marker:
             print("Marker not found, rotating slightly...")
-            robot.setTarget(1, 6000)
+            robot.setTarget(1, 5800)
             small_rotate_left()
 
     print("Approaching the marker...")
