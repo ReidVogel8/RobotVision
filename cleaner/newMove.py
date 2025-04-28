@@ -74,12 +74,12 @@ def move_backward(duration):
     robot.setTarget(LEFT_WHEEL, 6000)
 
 def small_rotate_left():
-        time.sleep(0.5)
-        self.m.setTarget(1, 6000)
-        time.sleep(0.5)
-        self.m.setTarget(1, 7000)
-        time.sleep(0.5)
-        self.m.setTarget(1, 6000)
+    time.sleep(0.5)
+    robot.setTarget(1, 6000)
+    time.sleep(0.5)
+    robot.setTarget(1, 7000)
+    time.sleep(0.5)
+    srobot.setTarget(1, 6000)
 
 # Face Detector
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
