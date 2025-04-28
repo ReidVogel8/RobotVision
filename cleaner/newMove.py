@@ -169,7 +169,7 @@ try:
 
     print("Approaching the marker...")
 
-    # === New approach loop: Move forward until z <= 0.08 meters ===
+    # New approach loop: Move forward until z <= 0.08 meters
     close_enough = False
     while not close_enough:
         frames = pipeline.wait_for_frames()
@@ -188,7 +188,7 @@ try:
                     z = tvec[0][0][2]
                     print(f"Distance to marker (Z): {z:.3f} meters")
 
-                    if z <= 0.08:
+                    if z <= 0.1:
                         print("Reached close enough to marker.")
                         close_enough = True
                         break
