@@ -74,6 +74,7 @@ def move_backward(duration):
     robot.setTarget(LEFT_WHEEL, 6000)
 
 def rotate_left():
+    time.sleep(0.3)
     robot.setTarget(RIGHT_WHEEL, 6000)
     time.sleep(0.3)
     robot.setTarget(RIGHT_WHEEL, 6500)
