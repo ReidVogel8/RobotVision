@@ -78,6 +78,7 @@ def small_rotate_left():
     robot.setTarget(1, 6000)
     time.sleep(0.5)
     robot.setTarget(1, 7000)
+    print("actually rotating")
     time.sleep(0.3)
     robot.setTarget(1, 6000)
 
