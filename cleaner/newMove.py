@@ -78,7 +78,7 @@ def small_rotate_left():
     robot.setTarget(1, 6000)
     time.sleep(0.5)
     robot.setTarget(1, 7000)
-    time.sleep(0.2)
+    time.sleep(0.3)
     robot.setTarget(1, 6000)
 
 # Face Detector
@@ -163,7 +163,6 @@ try:
                     break
         if not found_marker:
             print("Marker not found, rotating slightly...")
-            time.sleep(0.5)
             small_rotate_left()
 
     print("Approaching the marker...")
