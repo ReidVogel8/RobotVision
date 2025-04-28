@@ -75,12 +75,13 @@ def move_backward(duration):
 
 def small_rotate_left():
     print("test")
-    robot.setTarget(RIGHT_WHEEL, 6000)
-    time.sleep(0.1)
-    robot.setTarget(RIGHT_WHEEL, 6500)
+    time.sleep(0.3)
+    robot.setTarget(1, 6000)
+    time.sleep(0.3)
+    robot.setTarget(1, 6500)
     time.sleep(0.2)
-    robot.setTarget(RIGHT_WHEEL, 6000)
-    time.sleep(0.1)
+    robot.setTarget(1, 6000)
+    time.sleep(0.3)
 
 # Face Detector
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
@@ -133,6 +134,7 @@ try:
         print(f"Fine. That’s the {name}. Guess I’ll put it in box {obj_id}.")
         print("Initiating ring ritual. Raising arm.")
         raise_arm()
+        time.sleep(5)
     else:
         print("I have no idea what that is. I'm going back to sleep.")
         exit()
