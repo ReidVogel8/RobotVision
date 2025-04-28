@@ -62,14 +62,14 @@ def lower_arm():
 def move_forward(duration):
     robot.setTarget(LEFT_WHEEL, 6000)
     time.sleep(0.3)
-    robot.setTarget(LEFT_WHEEL, 8000)
+    robot.setTarget(LEFT_WHEEL, 6100)
     time.sleep(duration)
     robot.setTarget(LEFT_WHEEL, 6000)
 
 def move_backward(duration):
     robot.setTarget(LEFT_WHEEL, 6000)
     time.sleep(0.3)
-    robot.setTarget(LEFT_WHEEL, 5000)
+    robot.setTarget(LEFT_WHEEL, 5700)
     time.sleep(duration)
     robot.setTarget(LEFT_WHEEL, 6000)
 
@@ -228,13 +228,13 @@ try:
         print("Warning: max approach attempts reached without getting close enough.")
     else:
         print("Arrived at the box.")
-
-    # Lower the arm after moving
-    print("Lowering arm and dropping ring.")
-    lower_arm()
+        # Lower the arm after moving
+        print("Lowering arm and dropping ring.")
+        lower_arm()
 
     # Return to Center (marker ID 0)
     print("Returning to the start.")
+    time.sleep(2)
     move_backward(1)
 
     print("Cleaning complete. Barely.")
