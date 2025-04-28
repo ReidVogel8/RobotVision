@@ -2,9 +2,32 @@ import cv2
 import pickle
 import numpy as np
 import pyrealsense2 as rs
-import pyttsx3
 import time
-from controller import Controller  # Your Maestro controller class
+import edge_tts
+import asyncio
+import threading
+import playsound  # or your preferred playback method
+from maestro import Controller  # Your Maestro controller class
+
+class Talk:
+    def __init__(self, voice="en-US-ChristopherNeural"):
+        self.voice = voice
+
+    async def _speak_async(self, text: str):
+        temp_file = "tts.wav"
+        communicate = edge_tts.Communicate(text, self.voice)
+        await communicate.save(temp_file)
+        playsound.playsound(temp_file)
+
+    def say(self, text: str):
+        # Fire-and-forget TTS in a background thread
+        threading.Thread(target=self._run_async, args=(text,), daemon=True).start()
+
+    def _run_async(self, text: str):
+        asyncio.run(self._speak_async(text))
+
+# Initialize Text-to-Speech
+speaker = Talk(voice="en-US-GuyNeural")  # change voice as desired
 
 # Load Calibration
 with open("calibration.pkl", "rb") as f:
@@ -19,8 +42,7 @@ with open("trainedObjects.pkl", "rb") as f:
 # Rebuild Keypoints
 for obj in trained_objects:
     obj['keypoints'] = [
-        cv2.KeyPoint(x=pt[0][0], y=pt[0][1], _size=pt[1], _angle=pt[2],
-                     _response=pt[3], _octave=pt[4], _class_id=pt[5])
+        cv2.KeyPoint(pt[0][0], pt[0][1], pt[1], pt[2], pt[3], int(pt[4]), int(pt[5]))
         for pt in obj['keypoints']
     ]
 
@@ -29,17 +51,9 @@ orb = cv2.ORB_create(nfeatures=1000)
 bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 
 # ArUco Setup
-aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
-parameters = cv2.aruco.DetectorParameters()
-detector = cv2.aruco.ArucoDetector(aruco_dict, parameters)
-
-# TTS Engine
-engine = pyttsx3.init()
-
-def say(text):
-    print(f"🗣️ {text}")
-    engine.say(text)
-    engine.runAndWait()
+dict_4x4 = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
+params = cv2.aruco.DetectorParameters()
+detector = cv2.aruco.ArucoDetector(dict_4x4, params)
 
 # RealSense Setup
 pipeline = rs.pipeline()
@@ -49,137 +63,162 @@ pipeline.start(config)
 
 # Robot Setup
 robot = Controller()
-ARM_PORT = 3
 
+# Motor Ports
+LEFT_WHEEL = 0
+RIGHT_WHEEL = 1
+LEFT_ELBOW = 7
+LEFT_SHOULDER = 5
+
+# Movement Functions
 def raise_arm():
-    robot.setTarget(ARM_PORT, 8000)
+    robot.setTarget(LEFT_SHOULDER, 5600)
+    time.sleep(0.5)
+    robot.setTarget(LEFT_ELBOW, 8700)
     time.sleep(1)
 
 def lower_arm():
-    robot.setTarget(ARM_PORT, 5000)
+    robot.setTarget(LEFT_SHOULDER, 6500)
+    time.sleep(0.3)
+    robot.setTarget(LEFT_ELBOW, 5600)
     time.sleep(1)
 
-# Face Detector
-face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+def move_forward(duration: float):
+    robot.setTarget(LEFT_WHEEL, 6000)
+    time.sleep(0.3)
+    robot.setTarget(LEFT_WHEEL, 8000)
+    time.sleep(duration)
+    robot.setTarget(LEFT_WHEEL, 6000)
+
+def move_backward(duration: float):
+    robot.setTarget(LEFT_WHEEL, 6000)
+    time.sleep(0.3)
+    robot.setTarget(LEFT_WHEEL, 5000)
+    time.sleep(duration)
+    robot.setTarget(LEFT_WHEEL, 6000)
+
+def small_rotate_left():
+    robot.setTarget(RIGHT_WHEEL, 5800)
+    time.sleep(0.5)
+    robot.setTarget(RIGHT_WHEEL, 6000)
+    time.sleep(0.3)
+    robot.setTarget(RIGHT_WHEEL, 5800)
 
 # Main Routine
-try:
-    print("Robot ready. Scanning for face...")
+def main():
+    try:
+        # Greet and notify
+        speaker.say("Robot ready. Scanning for face...")
+        print("Robot ready. Scanning for face...")
 
-    while True:
+        # Face detection loop
+        face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        while True:
+            frames = pipeline.wait_for_frames()
+            color_frame = frames.get_color_frame()
+            if not color_frame:
+                continue
+            frame = np.asanyarray(color_frame.get_data())
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+            faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+            if any(w > 100 and h > 100 for (_, _, w, h) in faces):
+                speaker.say("Ugh. What now?")
+                print("Ugh. What now?")
+                break
+
+        # Ask for object
+        speaker.say("What am I supposed to clean up this time?")
+        print("What am I supposed to clean up this time?")
+        time.sleep(2)
+
+        # Capture and identify object
         frames = pipeline.wait_for_frames()
-        color_frame = frames.get_color_frame()
-        if not color_frame:
-            continue
-        frame = np.asanyarray(color_frame.get_data())
+        frame = np.asanyarray(frames.get_color_frame().get_data())
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        kp, des = orb.detectAndCompute(gray, None)
 
-        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
-        face_detected = any(w > 100 and h > 100 for (x, y, w, h) in faces)
+        best_match = None
+        best_matches = []
+        for obj in trained_objects:
+            matches = bf.match(des, obj['descriptors'])
+            matches = sorted(matches, key=lambda x: x.distance)
+            if len(matches) > len(best_matches):
+                best_matches, best_match = matches, obj
 
-        if face_detected:
-            break
+        if best_match:
+            name, obj_id = best_match['name'], best_match['id']
+            speaker.say(f"Fine. That's the {name}. Guiding to box {obj_id}.")
+            print(f"Fine. That’s the {name}. Guess I’ll put it in box {obj_id}.")
+            speaker.say("Initiating ring ritual. Raising arm.")
+            raise_arm()
+            time.sleep(1)
+        else:
+            speaker.say("I have no idea what that is. Going to sleep.")
+            print("I have no idea what that is. I'm going back to sleep.")
+            return
 
-    # Ask for Object
-    say("What am I supposed to clean up this time?")
-    time.sleep(2)
+        # Scan for ArUco marker
+        speaker.say("Scanning for marker while rotating...")
+        print("Scanning for marker while rotating...")
+        found_marker = False
+        while not found_marker:
+            frames = pipeline.wait_for_frames()
+            frame = np.asanyarray(frames.get_color_frame().get_data())
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            corners, ids, _ = detector.detectMarkers(gray)
+            if ids is not None:
+                for i, mid in enumerate(ids.flatten()):
+                    if mid == obj_id:
+                        speaker.say(f"Found marker {obj_id}.")
+                        print(f"Found Marker {obj_id}")
+                        found_marker = True
+                        break
+            if not found_marker:
+                speaker.say("Marker not found, rotating slightly.")
+                print("Marker not found, rotating slightly...")
+                small_rotate_left()
 
-    # Capture object input
-    frames = pipeline.wait_for_frames()
-    color_frame = frames.get_color_frame()
-    frame = np.asanyarray(color_frame.get_data())
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        # Approach marker
+        speaker.say("Approaching the marker.")
+        print("Approaching the marker...")
+        close_enough = False
+        while not close_enough:
+            frames = pipeline.wait_for_frames()
+            frame = np.asanyarray(frames.get_color_frame().get_data())
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            corners, ids, _ = detector.detectMarkers(gray)
+            if ids is not None:
+                for i, mid in enumerate(ids.flatten()):
+                    if mid == obj_id:
+                        _, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners[i], 0.055, camera_matrix, dist_coeffs)
+                        z = tvec[0][0][2]
+                        speaker.say(f"Distance to marker is {z:.2f} meters.")
+                        print(f"Distance to marker (Z): {z:.3f} meters")
+                        if z <= 0.1:
+                            speaker.say("Reached close enough to marker.")
+                            print("Reached close enough to marker.")
+                            close_enough = True
+                            break
+            if not close_enough:
+                move_backward(0.2)
+                time.sleep(0.1)
 
-    # ORB Detect on Current Frame
-    kp, des = orb.detectAndCompute(gray, None)
+        # Final actions
+        speaker.say("Lowering arm and dropping ring.")
+        print("Lowering arm and dropping ring.")
+        lower_arm()
+        time.sleep(1)
+        move_forward(1)
+        speaker.say("Task complete.")
+        print("Task complete.")
 
-    best_match = None
-    best_matches = []
+    except KeyboardInterrupt:
+        speaker.say("Interrupted by user.")
+        print("Interrupted by user.")
+    finally:
+        pipeline.stop()
+        cv2.destroyAllWindows()
 
-    for obj in trained_objects:
-        matches = bf.match(des, obj['descriptors'])
-        matches = sorted(matches, key=lambda x: x.distance)
-        if len(matches) > len(best_matches):
-            best_matches = matches
-            best_match = obj
-
-    if best_match:
-        name = best_match['name']
-        obj_id = best_match['id']
-        say(f"Fine. That’s the {name}. Guess I’ll put it in box {obj_id}.")
-    else:
-        say("I have no idea what that is. I'm going back to sleep.")
-        exit()
-
-    # Raise Arm for Ritual
-    say("Initiating ring ritual. This is so dumb.")
-    raise_arm()
-
-    # Navigate to Marker
-    found = False
-    while not found:
-        frames = pipeline.wait_for_frames()
-        color_frame = frames.get_color_frame()
-        frame = np.asanyarray(color_frame.get_data())
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-        corners, ids, _ = detector.detectMarkers(gray)
-
-        if ids is not None:
-            for i, marker_id in enumerate(ids):
-                if int(marker_id) == obj_id:
-                    found = True
-                    cx = corners[i][0][:, 0].mean()
-                    center = frame.shape[1] // 2
-
-                    # Turn to face it
-                    if cx < center - 50:
-                        robot.setTarget(4, 7700)  # pan left
-                        time.sleep(1)
-                    elif cx > center + 50:
-                        robot.setTarget(4, 4700)  # pan right
-                        time.sleep(1)
-
-                    # Move forward (very basic)
-                    robot.setTarget(0, 5000)  # left wheel
-                    robot.setTarget(1, 7000)  # right wheel
-                    time.sleep(2)
-                    robot.setTarget(0, 6000)
-                    robot.setTarget(1, 6000)
-
-                    say(f"Ugh. I’m here. Box {obj_id} I guess.")
-                    break
-
-    # Drop the Ring
-    lower_arm()
-    say("There. I dropped it. Are you happy now?")
-
-    # Return to Center (marker ID 0)
-    say("Returning to the start. Barely.")
-    returning = False
-    while not returning:
-        frames = pipeline.wait_for_frames()
-        color_frame = frames.get_color_frame()
-        frame = np.asanyarray(color_frame.get_data())
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-        corners, ids, _ = detector.detectMarkers(gray)
-        if ids is not None:
-            for i, marker_id in enumerate(ids):
-                if int(marker_id) == 0:
-                    returning = True
-                    # move forward-ish
-                    robot.setTarget(0, 5000)
-                    robot.setTarget(1, 7000)
-                    time.sleep(2)
-                    robot.setTarget(0, 6000)
-                    robot.setTarget(1, 6000)
-                    break
-
-    say("Cleaning complete.")
-
-except KeyboardInterrupt:
-    print("Interrupted by user.")
-finally:
-    pipeline.stop()
-    cv2.destroyAllWindows()
+if __name__ == "__main__":
+    main()
