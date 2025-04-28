@@ -74,7 +74,6 @@ def move_backward(duration):
     robot.setTarget(LEFT_WHEEL, 6000)
 
 def rotate_left():
-    time.sleep(0.3)
     robot.setTarget(RIGHT_WHEEL, 6000)
     time.sleep(0.3)
     robot.setTarget(RIGHT_WHEEL, 6500)
@@ -97,7 +96,7 @@ try:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         faces = face_cascade.detectMultiScale(gray, 1.3, 5)
-        face_detected = any(w > 100 and h > 100 for (x, y, w, h) in faces)
+        face_detected = any(w > 100 and h > 100 for (_, _, w, h) in faces)
 
         if face_detected:
             print("Ugh. What now?")
@@ -116,17 +115,22 @@ try:
     # ORB Detect on Current Frame
     kp, des = orb.detectAndCompute(gray, None)
 
+    # Matching with distance threshold
     best_match = None
-    best_matches = []
+    best_good_matches = []
+    MIN_MATCH_COUNT = 10     # tune as needed
+    DIST_THRESHOLD = 30      # ORB Hamming distance threshold
 
     for obj in trained_objects:
         matches = bf.match(des, obj['descriptors'])
-        matches = sorted(matches, key=lambda x: x.distance)
-        if len(matches) > len(best_matches):
-            best_matches = matches
+        # keep only good matches below distance threshold
+        good = [m for m in matches if m.distance < DIST_THRESHOLD]
+        if len(good) > len(best_good_matches):
+            best_good_matches = good
             best_match = obj
 
-    if best_match:
+    # Verify we have enough good matches
+    if best_match and len(best_good_matches) >= MIN_MATCH_COUNT:
         name = best_match['name']
         obj_id = best_match['id']
         print(f"Fine. That’s the {name}. Guess I’ll put it in box {obj_id}.")
@@ -154,10 +158,10 @@ try:
         if ids is not None:
             for i, marker_id in enumerate(ids):
                 if int(marker_id) == obj_id:
-                    rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners[i], 0.055, camera_matrix, dist_coeffs)
-                    x = tvec[0][0][0]
-                    y = tvec[0][0][1]
-                    z = tvec[0][0][2]
+                    rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(
+                        corners[i], 0.055, camera_matrix, dist_coeffs
+                    )
+                    x, y, z = tvec[0][0]
                     print(f"Found Marker {obj_id} - X: {x:.2f}m, Y: {y:.2f}m, Z: {z:.2f}m")
                     found = True
                     break
@@ -180,18 +184,18 @@ try:
     max_approach_attempts = 10
 
     while not close_enough and approach_attempts < max_approach_attempts:
-        # Get latest frame
         frames = pipeline.wait_for_frames()
         color_frame = frames.get_color_frame()
         frame = np.asanyarray(color_frame.get_data())
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-        # Detect ArUco marker
         corners, ids, _ = detector.detectMarkers(gray)
         if ids is not None:
             for i, marker_id in enumerate(ids):
                 if int(marker_id) == obj_id:
-                    rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(corners[i], 0.055, camera_matrix, dist_coeffs)
+                    rvec, tvec, _ = cv2.aruco.estimatePoseSingleMarkers(
+                        corners[i], 0.055, camera_matrix, dist_coeffs
+                    )
                     z = tvec[0][0][2]
                     print(f"Distance to marker (Z): {z:.2f} meters")
 
