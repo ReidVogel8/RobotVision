@@ -74,7 +74,6 @@ def move_backward(duration):
     robot.setTarget(LEFT_WHEEL, 6000)
 
 def small_rotate_left():
-    time.sleep(0.5)
     robot.setTarget(1, 6000)
     time.sleep(0.5)
     robot.setTarget(1, 7000)
