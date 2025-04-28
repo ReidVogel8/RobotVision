@@ -54,7 +54,7 @@ def raise_arm():
     time.sleep(1)
 
 def lower_arm():
-    robot.setTarget(LEFT_SHOULDER, 8000)
+    robot.setTarget(LEFT_SHOULDER, 6500)
     time.sleep(0.3)
     robot.setTarget(LEFT_ELBOW, 5600)
     time.sleep(1)
@@ -193,14 +193,16 @@ try:
                         close_enough = True
                         break
         if not close_enough:
-            move_backward(0.2)
+            move_backward(0.2) # moving forwards
             time.sleep(0.1)
 
     # Lower arm when close enough
     print("Lowering arm and dropping ring.")
+    time.sleep(5)
     lower_arm()
     time.sleep(0.5)
-    # move backwards
+    
+    move_forward(1)
 
     print("Task complete.")
 
