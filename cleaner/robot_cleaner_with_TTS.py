@@ -195,7 +195,7 @@ try:
                         corners[i], 0.055, camera_matrix, dist_coeffs
                     )
                     z = tvec[0][0][2]
-                    #print(f"Distance to marker (Z): {z:.3f} meters")
+                    print(f"(Z): {z:.3f} meters")
                     if z <= 0.1:
                         print("Reached close enough to marker.")
                         close_enough = True
@@ -210,7 +210,7 @@ try:
     robot.lower_arm()
     time.sleep(0.5)
 
-    robot.move_forward(1)
+    robot.move_forward(3)
     print("Task complete.")
 
 except KeyboardInterrupt:
