@@ -97,7 +97,7 @@ class RobotControl:
         self.m.setTarget(1, 6000)
         time.sleep(0.5)
         self.m.setTarget(1, 7000)
-        time.sleep(.3)
+        time.sleep(.4)
         self.m.setTarget(1, 6000)
 
 robot = RobotControl.getInst()
