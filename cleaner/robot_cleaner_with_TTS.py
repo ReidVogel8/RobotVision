@@ -51,10 +51,10 @@ pipeline.start(config)
 # Robot Setup
 robot = Controller()
 
-LEFT_WHEEL    = 0
-RIGHT_WHEEL   = 1
-LEFT_ELBOW    = 13
-LEFT_SHOULDER = 11
+LEFT_WHEEL    = 1
+RIGHT_WHEEL   = 0
+LEFT_ELBOW    = 7
+LEFT_SHOULDER = 5
 
 def raise_arm():
     robot.setTarget(LEFT_SHOULDER, 5600)
@@ -84,11 +84,11 @@ def move_backward(duration):
 
 def rotate_left():
     time.sleep(0.5)
-    robot.setTarget(1, 6000)
+    robot.setTarget(RIGHT_WHEEL, 6000)
     time.sleep(0.5)
-    robot.setTarget(1, 6500)
+    robot.setTarget(RIGHT_WHEEL, 6500)
     time.sleep(1)
-    robot.setTarget(1, 6000)
+    robot.setTarget(RIGHT_WHEEL, 6000)
 
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
