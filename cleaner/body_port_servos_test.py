@@ -70,11 +70,11 @@ class RobotControl:
 
     def rotate_left(self):
         time.sleep(0.5)
-        self.m.setTarget(0, 6000)
+        self.m.setTarget(1, 6000)
         time.sleep(0.5)
-        self.m.setTarget(0, 7000)
+        self.m.setTarget(1, 7000)
         time.sleep(2)
-        self.m.setTarget(0, 6000)
+        self.m.setTarget(1, 6000)
 
     def forward(self):
         time.sleep(0.5)
@@ -87,9 +87,9 @@ class RobotControl:
 robot = RobotControl()
 
 def main():
-    #robot.body_reset()
+    robot.body_reset()
     #robot.servo_test()
     robot.rotate_left()
-    #robot.forward()
+    robot.forward()
     
 main()
