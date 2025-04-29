@@ -162,7 +162,9 @@ try:
                     break
         if not found_marker:
             print("Marker not found, rotating slightly...")
+            time.sleep(0.5)
             rotate_left()
+            time.sleep(0.5)
 
     print("Approaching the marker...")
     close_enough = False
