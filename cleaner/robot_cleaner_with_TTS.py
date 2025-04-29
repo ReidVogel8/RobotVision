@@ -196,7 +196,7 @@ try:
                     )
                     z = tvec[0][0][2]
                     print(f"(Z): {z:.3f} meters")
-                    if z <= 0.1:
+                    if z <= 0.15:
                         print("Reached close enough to marker.")
                         close_enough = True
                         break
@@ -210,7 +210,7 @@ try:
     robot.lower_arm()
     time.sleep(0.5)
 
-    robot.move_forward(2.5)
+    robot.move_forward(2.0)
     print("Task complete.")
 
 except KeyboardInterrupt:
