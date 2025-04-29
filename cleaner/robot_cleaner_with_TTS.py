@@ -145,7 +145,7 @@ try:
         name, obj_id = best_match['name'], best_match['id']
         print(f"Fine. That’s the {name}. Guess I’ll put it in box {obj_id}.")
         print("Initiating ring ritual. Raising arm.")
-        raise_arm()
+        robot.raise_arm()
         time.sleep(3)
     else:
         print("I have no idea what that is. I'm going back to sleep.")
@@ -200,15 +200,15 @@ try:
                         close_enough = True
                         break
         if not close_enough:
-            move_backward(0.2)
+            robot.move_backward(0.2)
             time.sleep(0.1)
 
     print("Lowering arm and dropping ring.")
     time.sleep(5)
-    lower_arm()
+    robot.lower_arm()
     time.sleep(0.5)
 
-    move_forward(1)
+    robot.move_forward(1)
     print("Task complete.")
 
 except KeyboardInterrupt:
