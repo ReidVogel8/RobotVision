@@ -71,7 +71,7 @@ def lower_arm():
 def move_forward(duration):
     robot.setTarget(LEFT_WHEEL, 6000)
     time.sleep(0.3)
-    robot.setTarget(LEFT_WHEEL, 8000)
+    robot.setTarget(LEFT_WHEEL, 7000)
     time.sleep(duration)
     robot.setTarget(LEFT_WHEEL, 6000)
 
