@@ -100,13 +100,9 @@ class RobotControl:
         time.sleep(1)
         self.m.setTarget(RIGHT_WHEEL, 6000)
 
-# ── Here’s the ONE line that changed ────────────────────────────────
 robot = RobotControl.getInst()
-# ──────────────────────────────────────────────────────────────────
 
-face_cascade = cv2.CascadeClassifier(
-    cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
-)
+face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 try:
     print("Robot ready. Scanning for face...")
