@@ -97,7 +97,7 @@ class RobotControl:
         self.m.setTarget(1, 6000)
         time.sleep(0.5)
         self.m.setTarget(1, 7000)
-        time.sleep(2)
+        time.sleep(.5)
         self.m.setTarget(1, 6000)
 
 robot = RobotControl.getInst()
@@ -195,7 +195,7 @@ try:
                         corners[i], 0.055, camera_matrix, dist_coeffs
                     )
                     z = tvec[0][0][2]
-                    print(f"Distance to marker (Z): {z:.3f} meters")
+                    #print(f"Distance to marker (Z): {z:.3f} meters")
                     if z <= 0.1:
                         print("Reached close enough to marker.")
                         close_enough = True
