@@ -66,30 +66,30 @@ class RobotControl:
         self.m = Controller()
 
     def raise_arm(self):
-        robot.setTarget(LEFT_SHOULDER, 5600)
+        self.m.setTarget(LEFT_SHOULDER, 5600)
         time.sleep(0.5)
-        robot.setTarget(LEFT_ELBOW, 8700)
+        self.m.setTarget(LEFT_ELBOW, 8700)
         time.sleep(1)
 
     def lower_arm(self):
-        robot.setTarget(LEFT_SHOULDER, 6500)
+        self.m.setTarget(LEFT_SHOULDER, 6500)
         time.sleep(0.3)
-        robot.setTarget(LEFT_ELBOW, 5600)
+        self.m.setTarget(LEFT_ELBOW, 5600)
         time.sleep(1)
 
     def move_forward(self, duration):
-        robot.setTarget(LEFT_WHEEL, 6000)
+        self.m.setTarget(LEFT_WHEEL, 6000)
         time.sleep(0.3)
-        robot.setTarget(LEFT_WHEEL, 7000)
+        self.m.setTarget(LEFT_WHEEL, 7000)
         time.sleep(duration)
-        robot.setTarget(LEFT_WHEEL, 6000)
+        self.m.setTarget(LEFT_WHEEL, 6000)
 
     def move_backward(self, duration):
-        robot.setTarget(LEFT_WHEEL, 6000)
+        self.m.setTarget(LEFT_WHEEL, 6000)
         time.sleep(0.3)
-        robot.setTarget(LEFT_WHEEL, 5000)
+        self.m.setTarget(LEFT_WHEEL, 5000)
         time.sleep(duration)
-        robot.setTarget(LEFT_WHEEL, 6000)
+        self.m.setTarget(LEFT_WHEEL, 6000)
 
     def rotate_left(self):
         time.sleep(0.5)
