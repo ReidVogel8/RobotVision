@@ -49,8 +49,8 @@ config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
 pipeline.start(config)
 
 # Motor Ports
-LEFT_WHEEL    = 1
-RIGHT_WHEEL   = 0
+LEFT_WHEEL    = 0
+RIGHT_WHEEL   = 1
 LEFT_ELBOW    = 7
 LEFT_SHOULDER = 5
 
@@ -94,11 +94,11 @@ class RobotControl:
 
     def rotate_left(self):
         time.sleep(0.5)
-        self.m.setTarget(RIGHT_WHEEL, 6000)
+        self.m.setTarget(1, 6000)
         time.sleep(0.5)
-        self.m.setTarget(RIGHT_WHEEL, 6500)
-        time.sleep(1)
-        self.m.setTarget(RIGHT_WHEEL, 6000)
+        self.m.setTarget(1, 7000)
+        time.sleep(2)
+        self.m.setTarget(1, 6000)
 
 robot = RobotControl.getInst()
 
