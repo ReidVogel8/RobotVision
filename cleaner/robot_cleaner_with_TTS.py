@@ -53,8 +53,8 @@ robot = Controller()
 
 LEFT_WHEEL    = 0
 RIGHT_WHEEL   = 1
-LEFT_ELBOW    = 7
-LEFT_SHOULDER = 5
+LEFT_ELBOW    = 13
+LEFT_SHOULDER = 11
 
 def raise_arm():
     robot.setTarget(LEFT_SHOULDER, 5600)
