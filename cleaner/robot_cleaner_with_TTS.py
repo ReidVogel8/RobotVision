@@ -82,12 +82,13 @@ def move_backward(duration):
     time.sleep(duration)
     robot.setTarget(LEFT_WHEEL, 6000)
 
-def small_rotate_left():
-    robot.setTarget(1, 6000)
+def rotate_left(self):
     time.sleep(0.5)
-    robot.setTarget(1, 7000)
+    self.m.setTarget(1, 6000)
     time.sleep(0.5)
-    robot.setTarget(1, 6000)
+    self.m.setTarget(1, 6500)
+    time.sleep(1)
+    self.m.setTarget(1, 6000)
 
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
@@ -161,7 +162,7 @@ try:
                     break
         if not found_marker:
             print("Marker not found, rotating slightly...")
-            small_rotate_left()
+            rotate_left()
 
     print("Approaching the marker...")
     close_enough = False
