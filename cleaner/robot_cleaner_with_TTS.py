@@ -35,19 +35,20 @@ for obj in trained_objects:
 
 # ORB Matcher
 orb = cv2.ORB_create(nfeatures=1000)
-bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+bf  = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 
 # ArUco Setup
 aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
-parameters = cv2.aruco.DetectorParameters()
-detector = cv2.aruco.ArucoDetector(aruco_dict, parameters)
+parameters  = cv2.aruco.DetectorParameters()
+detector    = cv2.aruco.ArucoDetector(aruco_dict, parameters)
 
 # RealSense Setup
 pipeline = rs.pipeline()
-config = rs.config()
+config   = rs.config()
 config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
 pipeline.start(config)
 
+# Motor Ports
 LEFT_WHEEL    = 1
 RIGHT_WHEEL   = 0
 LEFT_ELBOW    = 7
@@ -99,23 +100,26 @@ class RobotControl:
         time.sleep(1)
         self.m.setTarget(RIGHT_WHEEL, 6000)
 
-# Robot Setup
-robot = Controller()
+# ── Here’s the ONE line that changed ────────────────────────────────
+robot = RobotControl.getInst()
+# ──────────────────────────────────────────────────────────────────
 
-face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+face_cascade = cv2.CascadeClassifier(
+    cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
+)
 
 try:
     print("Robot ready. Scanning for face...")
 
     while True:
-        frames = pipeline.wait_for_frames()
+        frames      = pipeline.wait_for_frames()
         color_frame = frames.get_color_frame()
         if not color_frame:
             continue
         frame = np.asanyarray(color_frame.get_data())
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray  = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+        faces         = face_cascade.detectMultiScale(gray, 1.3, 5)
         face_detected = any(w > 100 and h > 100 for (x, y, w, h) in faces)
 
         if face_detected:
@@ -125,21 +129,21 @@ try:
     print("What am I supposed to clean up this time?")
     time.sleep(2)
 
-    frames = pipeline.wait_for_frames()
+    frames      = pipeline.wait_for_frames()
     color_frame = frames.get_color_frame()
-    frame = np.asanyarray(color_frame.get_data())
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    frame       = np.asanyarray(color_frame.get_data())
+    gray        = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     kp, des = orb.detectAndCompute(gray, None)
 
-    best_match = None
+    best_match   = None
     best_matches = []
     for obj in trained_objects:
         matches = bf.match(des, obj['descriptors'])
         matches = sorted(matches, key=lambda x: x.distance)
         if len(matches) > len(best_matches):
             best_matches = matches
-            best_match = obj
+            best_match   = obj
 
     if best_match:
         name, obj_id = best_match['name'], best_match['id']
@@ -154,12 +158,12 @@ try:
     print("Scanning for marker while rotating...")
     found_marker = False
     while not found_marker:
-        frames = pipeline.wait_for_frames()
+        frames      = pipeline.wait_for_frames()
         color_frame = frames.get_color_frame()
         if not color_frame:
             continue
         frame = np.asanyarray(color_frame.get_data())
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray  = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         corners, ids, _ = detector.detectMarkers(gray)
         if ids is not None:
@@ -172,6 +176,7 @@ try:
                     print(f"Found Marker {obj_id} – X: {x:.2f}m, Y: {y:.2f}m, Z: {z:.2f}m")
                     found_marker = True
                     break
+
         if not found_marker:
             print("Marker not found, rotating slightly...")
             robot.rotate_left()
@@ -179,12 +184,12 @@ try:
     print("Approaching the marker...")
     close_enough = False
     while not close_enough:
-        frames = pipeline.wait_for_frames()
+        frames      = pipeline.wait_for_frames()
         color_frame = frames.get_color_frame()
         if not color_frame:
             continue
         frame = np.asanyarray(color_frame.get_data())
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray  = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         corners, ids, _ = detector.detectMarkers(gray)
         if ids is not None:
@@ -199,6 +204,7 @@ try:
                         print("Reached close enough to marker.")
                         close_enough = True
                         break
+
         if not close_enough:
             robot.move_backward(0.2)
             time.sleep(0.1)
