@@ -210,7 +210,7 @@ try:
     robot.lower_arm()
     time.sleep(0.5)
 
-    robot.move_forward(3)
+    robot.move_forward(2.5)
     print("Task complete.")
 
 except KeyboardInterrupt:
