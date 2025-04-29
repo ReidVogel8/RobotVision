@@ -48,47 +48,59 @@ config = rs.config()
 config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
 pipeline.start(config)
 
-# Robot Setup
-robot = Controller()
-
 LEFT_WHEEL    = 1
 RIGHT_WHEEL   = 0
 LEFT_ELBOW    = 7
 LEFT_SHOULDER = 5
 
-def raise_arm():
-    robot.setTarget(LEFT_SHOULDER, 5600)
-    time.sleep(0.5)
-    robot.setTarget(LEFT_ELBOW, 8700)
-    time.sleep(1)
+class RobotControl:
+    _instance = None
 
-def lower_arm():
-    robot.setTarget(LEFT_SHOULDER, 6500)
-    time.sleep(0.3)
-    robot.setTarget(LEFT_ELBOW, 5600)
-    time.sleep(1)
+    @staticmethod
+    def getInst():
+        if RobotControl._instance is None:
+            RobotControl._instance = RobotControl()
+        return RobotControl._instance
 
-def move_forward(duration):
-    robot.setTarget(LEFT_WHEEL, 6000)
-    time.sleep(0.3)
-    robot.setTarget(LEFT_WHEEL, 7000)
-    time.sleep(duration)
-    robot.setTarget(LEFT_WHEEL, 6000)
+    def __init__(self):
+        self.m = Controller()
 
-def move_backward(duration):
-    robot.setTarget(LEFT_WHEEL, 6000)
-    time.sleep(0.3)
-    robot.setTarget(LEFT_WHEEL, 5000)
-    time.sleep(duration)
-    robot.setTarget(LEFT_WHEEL, 6000)
+    def raise_arm(self):
+        robot.setTarget(LEFT_SHOULDER, 5600)
+        time.sleep(0.5)
+        robot.setTarget(LEFT_ELBOW, 8700)
+        time.sleep(1)
 
-def rotate_left():
-    time.sleep(0.5)
-    robot.setTarget(RIGHT_WHEEL, 6000)
-    time.sleep(0.5)
-    robot.setTarget(RIGHT_WHEEL, 6500)
-    time.sleep(1)
-    robot.setTarget(RIGHT_WHEEL, 6000)
+    def lower_arm(self):
+        robot.setTarget(LEFT_SHOULDER, 6500)
+        time.sleep(0.3)
+        robot.setTarget(LEFT_ELBOW, 5600)
+        time.sleep(1)
+
+    def move_forward(self, duration):
+        robot.setTarget(LEFT_WHEEL, 6000)
+        time.sleep(0.3)
+        robot.setTarget(LEFT_WHEEL, 7000)
+        time.sleep(duration)
+        robot.setTarget(LEFT_WHEEL, 6000)
+
+    def move_backward(self, duration):
+        robot.setTarget(LEFT_WHEEL, 6000)
+        time.sleep(0.3)
+        robot.setTarget(LEFT_WHEEL, 5000)
+        time.sleep(duration)
+        robot.setTarget(LEFT_WHEEL, 6000)
+
+    def rotate_left(self):
+        time.sleep(0.5)
+        self.m.setTarget(RIGHT_WHEEL, 6000)
+        time.sleep(0.5)
+        self.m.setTarget(RIGHT_WHEEL, 6500)
+        time.sleep(1)
+        self.m.setTarget(RIGHT_WHEEL, 6000)
+
+# Robot Setup
+robot = Controller()
 
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
