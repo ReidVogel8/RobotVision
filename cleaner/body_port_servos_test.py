@@ -89,7 +89,7 @@ robot = RobotControl()
 def main():
     #robot.body_reset()
     #robot.servo_test()
-    #robot.rotate_left()
-    robot.forward()
+    robot.rotate_left()
+    #robot.forward()
     
 main()
