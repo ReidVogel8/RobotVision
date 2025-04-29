@@ -86,7 +86,7 @@ def small_rotate_left():
     robot.setTarget(1, 6000)
     time.sleep(0.5)
     robot.setTarget(1, 7000)
-    time.sleep(0.3)
+    time.sleep(0.5)
     robot.setTarget(1, 6000)
 
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
@@ -133,7 +133,7 @@ try:
         print(f"Fine. That’s the {name}. Guess I’ll put it in box {obj_id}.")
         print("Initiating ring ritual. Raising arm.")
         raise_arm()
-        time.sleep(5)
+        time.sleep(3)
     else:
         print("I have no idea what that is. I'm going back to sleep.")
         exit()
@@ -161,7 +161,6 @@ try:
                     break
         if not found_marker:
             print("Marker not found, rotating slightly...")
-            robot.setTarget(1, 5800)
             small_rotate_left()
 
     print("Approaching the marker...")
