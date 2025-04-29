@@ -196,7 +196,7 @@ try:
                     )
                     z = tvec[0][0][2]
                     print(f"(Z): {z:.3f} meters")
-                    if z <= 0.15:
+                    if z <= 0.135:
                         print("Reached close enough to marker.")
                         close_enough = True
                         break
